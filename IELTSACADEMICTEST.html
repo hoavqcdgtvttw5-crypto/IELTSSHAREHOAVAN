@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Academic Reading: Technology & Education</title>
+    <style>
+        /* ========================================
+           CSS VARIABLES & THEME
+        ======================================== */
+        :root {
+            --bg-body: #e2e8f0;
+            --bg-notebook: #ffffff;
+            --bg-col: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --navy-blue: #0f172a;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --light-yellow: #fefce8;
+            --vocab-hl: #fde047;
+            --vocab-hover: #facc15;
+            --correct: #10b981;
+            --wrong: #ef4444;
+            --border-color: #cbd5e1;
+            --shadow-3d: #94a3b8;
+            --gradient-1: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            --spine-color: #8b4513;
+        }
+
+        .dark-theme {
+            --bg-body: #0f172a;
+            --bg-notebook: #1e293b;
+            --bg-col: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --navy-blue: #38bdf8;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #60a5fa;
+            --light-yellow: #332e14;
+            --vocab-hl: #ca8a04;
+            --vocab-hover: #eab308;
+            --border-color: #475569;
+            --shadow-3d: #020617;
+            --gradient-1: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --spine-color: #3f2a1d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ========================================
+           LAYOUT & DECORATION (NOTEBOOK STYLE)
+        ======================================== */
+        .app-wrapper {
+            width: 100%;
+            max-width: 1800px;
+            height: 100%;
+            background-color: var(--spine-color);
+            border-radius: 20px;
+            padding-left: 40px; /* Notebook spine */
+            box-shadow: -10px 0 20px rgba(0,0,0,0.3), 15px 15px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .desk-decoration {
+            position: absolute;
+            font-size: 3rem;
+            filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.3));
+            z-index: 100;
+            pointer-events: none;
+        }
+        .deco-pen { top: -20px; right: 5%; transform: rotate(45deg); }
+        .deco-pencil { bottom: -10px; left: -10px; transform: rotate(-30deg); }
+        .deco-book { bottom: -20px; right: -20px; font-size: 4rem;}
+
+        .notebook-pages {
+            background-color: var(--bg-notebook);
+            height: 100%;
+            border-radius: 0 15px 15px 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Top Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: var(--navy-blue);
+            color: white;
+            border-bottom: 4px solid var(--accent-blue);
+            z-index: 10;
+        }
+
+        .header-title { font-size: 1.5rem; font-weight: bold; letter-spacing: 1px;}
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+        
+        .btn-theme {
+            background: none; border: 2px solid white; color: white;
+            padding: 5px 15px; border-radius: 20px; cursor: pointer;
+            font-weight: bold; transition: 0.2s;
+        }
+        .btn-theme:hover { background: white; color: var(--navy-blue); }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 6px; background: #e2e8f0; }
+        .progress-bar { height: 100%; background: var(--correct); width: 0%; transition: 0.3s; }
+
+        /* Timer */
+        .timer-box {
+            position: fixed;
+            top: 25px;
+            right: 40px;
+            background: var(--navy-blue);
+            color: white;
+            border: 3px solid var(--vocab-hl);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            box-shadow: 0 8px 0 var(--shadow-3d), 0 15px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+        }
+        .timer-danger { color: #f87171 !important; animation: pulse 1s infinite; border-color: #f87171;}
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* ========================================
+           TWO-COLUMN SPLIT
+        ======================================== */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .column {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        .column::-webkit-scrollbar { width: 10px; }
+        .column::-webkit-scrollbar-track { background: transparent; }
+        .column::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 5px; }
+
+        /* Left Column (Passage) */
+        .left-col {
+            background: var(--bg-notebook);
+            background-image: repeating-linear-gradient(transparent, transparent 31px, var(--border-color) 31px, var(--border-color) 32px);
+            background-attachment: local;
+            border-right: 3px dashed var(--border-color);
+            position: relative;
+            padding-left: 50px;
+        }
+        .left-col::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 40px;
+            width: 2px; background: #f87171; opacity: 0.5; z-index: 1;
+        }
+
+        /* Right Column (Questions) */
+        .right-col {
+            background: var(--bg-col);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background: var(--bg-notebook);
+            padding: 10px 0;
+            z-index: 5;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--navy-blue);
+            background: transparent;
+            color: var(--text-main);
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--navy-blue);
+            color: white;
+            box-shadow: 0 4px 0 var(--shadow-3d);
+            transform: translateY(-2px);
+        }
+
+        /* ========================================
+           PASSAGE STYLING & VOCAB
+        ======================================== */
+        .passage-content { display: none; font-size: 1.15rem; line-height: 2; z-index: 2; position: relative; padding-bottom: 50px;}
+        .passage-content.active { display: block; animation: fadeIn 0.4s; }
+        .passage-content h2 { color: var(--navy-blue); font-size: 1.8rem; margin-bottom: 20px; text-align: center; }
+        .passage-content p { margin-bottom: 20px; text-align: justify; }
+        .para-label { font-weight: bold; font-size: 1.2rem; color: var(--accent-blue); margin-right: 10px; }
+
+        .vocab {
+            background-color: var(--vocab-hl);
+            color: #854d0e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            border-bottom: 2px solid #a16207;
+            transition: 0.2s;
+        }
+        .dark-theme .vocab { color: #fef08a; border-bottom: 2px solid #facc15; }
+        .vocab:hover { background-color: var(--vocab-hover); transform: scale(1.05); display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed; background: var(--navy-blue); color: white;
+            padding: 15px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            max-width: 300px; z-index: 2000; opacity: 0; pointer-events: none;
+            transform: translateY(10px); transition: 0.3s;
+            border-top: 5px solid var(--vocab-hl);
+        }
+        .tooltip.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .tt-word { font-size: 1.3rem; font-weight: bold; color: var(--vocab-hl); text-transform: capitalize; }
+        .tt-pos { font-style: italic; color: #cbd5e1; font-size: 0.9rem; margin-bottom: 5px; }
+        .tt-vi { font-weight: bold; margin-bottom: 5px; }
+        .tt-ex { font-size: 0.9rem; color: #e2e8f0; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
+
+        /* ========================================
+           3D QUESTION CARDS
+        ======================================== */
+        .question-section { display: none; }
+        .question-section.active { display: block; animation: fadeIn 0.4s; }
+        .q-instructions { font-weight: bold; font-style: italic; margin-bottom: 20px; background: var(--light-yellow); padding: 15px; border-radius: 10px; border-left: 5px solid var(--accent-blue); color: #1e293b;}
+
+        .q-card {
+            background: var(--bg-notebook);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 8px 0 var(--shadow-3d), 0 15px 20px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            background-image: var(--gradient-1);
+        }
+        .q-card:hover { transform: translateY(-4px); box-shadow: 0 12px 0 var(--shadow-3d), 0 20px 25px rgba(0,0,0,0.1); }
+        .q-card.answered { border-color: var(--accent-blue); box-shadow: 0 8px 0 var(--accent-blue), 0 15px 20px rgba(0,0,0,0.1); }
+        
+        .q-num {
+            position: absolute; top: -15px; left: -15px; background: var(--navy-blue); color: white;
+            width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 1.2rem; box-shadow: 2px 4px 0 rgba(0,0,0,0.2);
+        }
+
+        .q-text { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; line-height: 1.6; }
+        
+        /* Inputs & Controls */
+        select, input[type="text"] {
+            width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px;
+            font-size: 1rem; font-family: inherit; background: var(--bg-notebook); color: var(--text-main);
+            transition: 0.2s; font-weight: bold;
+        }
+        select:focus, input[type="text"]:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
+        
+        .radio-group { display: flex; flex-direction: column; gap: 10px; }
+        .radio-label {
+            display: flex; align-items: center; padding: 10px 15px; border: 2px solid var(--border-color);
+            border-radius: 8px; cursor: pointer; transition: 0.2s; background: var(--bg-notebook); font-weight: 500;
+        }
+        .radio-label:hover { border-color: var(--accent-blue); background: var(--light-yellow); color: #1e293b;}
+        .radio-label input { margin-right: 15px; transform: scale(1.3); cursor: pointer; }
+        .radio-label.selected { border-color: var(--accent-blue); background: #eff6ff; color: #1e293b; font-weight: bold;}
+
+        /* Diagram/Flowchart specific */
+        .diagram-box { border: 2px dashed var(--accent-blue); padding: 20px; text-align: center; border-radius: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.5); }
+
+        /* ========================================
+           SIDEBAR NAVIGATOR & ACTIONS
+        ======================================== */
+        .sidebar {
+            background: var(--navy-blue);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 0 var(--shadow-3d);
+        }
+        .nav-title { text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 1.2rem; }
+        .nav-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin-bottom: 20px;}
+        .nav-btn {
+            background: var(--bg-notebook); color: var(--navy-blue); border: none; padding: 8px 0;
+            border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 0.9rem; transition: 0.2s;
+            box-shadow: 0 3px 0 var(--shadow-3d);
+        }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--shadow-3d); }
+        .nav-btn.filled { background: var(--accent-blue); color: white; }
+        .nav-btn.correct { background: var(--correct) !important; color: white !important; }
+        .nav-btn.wrong { background: var(--wrong) !important; color: white !important; }
+
+        .action-btns { display: flex; flex-direction: column; gap: 15px; }
+        .btn-main {
+            padding: 15px; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 900;
+            cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; color: white;
+        }
+        .btn-submit { background: var(--correct); box-shadow: 0 6px 0 #059669; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #059669; }
+        .btn-submit:active { transform: translateY(4px); box-shadow: 0 2px 0 #059669; }
+        .btn-reset { background: var(--wrong); box-shadow: 0 6px 0 #dc2626; }
+        
+        /* ========================================
+           MODALS (RESULTS & EXPLANATIONS)
+        ======================================== */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--bg-notebook); width: 90%; max-width: 800px; max-height: 90vh;
+            border-radius: 20px; padding: 40px; position: relative; overflow-y: auto;
+            border: 5px solid var(--navy-blue); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            color: var(--text-main);
+        }
+        .modal-close {
+            position: absolute; top: 20px; right: 20px; background: var(--wrong); color: white;
+            border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem;
+            cursor: pointer; font-weight: bold; box-shadow: 0 4px 0 #dc2626; transition: 0.2s;
+        }
+        .modal-close:hover { transform: scale(1.1); }
+        
+        .result-header { text-align: center; margin-bottom: 30px; border-bottom: 3px dashed var(--border-color); padding-bottom: 20px;}
+        .result-score { font-size: 4rem; font-weight: 900; color: var(--accent-blue); text-shadow: 2px 2px 0 var(--shadow-3d); }
+        .result-band { font-size: 2.5rem; color: var(--correct); font-weight: 900; background: #ecfdf5; display: inline-block; padding: 10px 30px; border-radius: 30px; border: 4px solid var(--correct); margin-top: 10px;}
+        
+        /* CSS Chart */
+        .chart-container { display: flex; height: 30px; width: 100%; background: #e2e8f0; border-radius: 15px; overflow: hidden; margin: 20px 0; }
+        .chart-correct { background: var(--correct); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .chart-wrong { background: var(--wrong); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .chart-unanswered { background: var(--text-muted); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;}
+
+        /* Explanations */
+        .exp-box {
+            background: var(--bg-col); border: 2px solid var(--border-color); padding: 20px;
+            border-radius: 15px; margin-bottom: 15px; border-left: 8px solid var(--text-muted);
+        }
+        .exp-box.correct { border-left-color: var(--correct); }
+        .exp-box.wrong { border-left-color: var(--wrong); }
+        .exp-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .exp-ans { color: var(--accent-blue); font-weight: 900; background: #e0f2fe; padding: 3px 8px; border-radius: 5px;}
+        .exp-text { margin-bottom: 10px; line-height: 1.6;}
+        .exp-quote { font-style: italic; background: var(--light-yellow); padding: 10px; border-left: 4px solid var(--vocab-hl); color: #854d0e; border-radius: 5px;}
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Media Queries */
+        @media (max-width: 1200px) {
+            .main-content { flex-direction: column; overflow-y: auto; }
+            body { overflow: auto; height: auto; }
+            .column { overflow: visible; }
+            .nav-grid { grid-template-columns: repeat(8, 1fr); }
+            .timer-box { top: auto; bottom: 20px; right: 20px; font-size: 1.5rem; }
+            .app-wrapper { border-radius: 0; padding-left: 20px; }
+            .left-col::before { left: 20px; }
+            .tabs { position: relative; }
+        }
+        @media (max-width: 600px) {
+            .nav-grid { grid-template-columns: repeat(5, 1fr); }
+            .timer-box { font-size: 1.2rem; padding: 5px 10px; }
+            .result-band { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- DECORATIONS -->
+    <div class="desk-decoration deco-pen">✒️</div>
+    <div class="desk-decoration deco-pencil">✏️</div>
+    <div class="desk-decoration deco-book">📚</div>
+
+    <div class="timer-box" id="timer">90:00</div>
+
+    <div class="app-wrapper">
+        <div class="notebook-pages">
+            <!-- HEADER -->
+            <header>
+                <div class="header-title">IELTS Academic Reading Mock Test</div>
+                <div class="header-controls">
+                    <button class="btn-theme" onclick="toggleTheme()">🌓 Dark Mode</button>
+                </div>
+            </header>
+            
+            <!-- PROGRESS -->
+            <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                
+                <!-- LEFT COLUMN: PASSAGES -->
+                <div class="column left-col" id="left-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(1)">Passage 1</button>
+                        <button class="tab-btn" onclick="switchTab(2)">Passage 2</button>
+                        <button class="tab-btn" onclick="switchTab(3)">Passage 3</button>
+                    </div>
+
+                    <!-- PASSAGE 1 -->
+                    <div class="passage-content active" id="passage-1">
+                        <h2>Artificial Intelligence in Modern Education</h2>
+                        
+                        <p><span class="para-label">A</span> The <span class="vocab" data-word="integration">integration</span> of Artificial Intelligence (AI) into modern educational systems represents a <span class="vocab" data-word="paradigm">paradigm</span> shift in how knowledge is disseminated and acquired. Historically, the classroom has operated on a 'one-size-fits-all' model, heavily reliant on the <span class="vocab" data-word="pedagogical">pedagogical</span> skills of individual teachers to address the diverse needs of a large student body. However, the advent of AI-driven Intelligent Tutoring Systems (ITS) has begun to dismantle this traditional framework. These systems utilize machine learning <span class="vocab" data-word="algorithms">algorithms</span> to analyze a student’s performance in real-time, identifying specific knowledge gaps and adapting the <span class="vocab" data-word="curriculum">curriculum</span> to suit their unique learning pace. A 2024 study by the Global Education Policy Institute found that students utilizing adaptive AI platforms demonstrated a 40% improvement in retention rates in STEM subjects compared to those taught via conventional methods.</p>
+
+                        <p><span class="para-label">B</span> Despite the <span class="vocab" data-word="empirical">empirical</span> evidence supporting its <span class="vocab" data-word="efficacy">efficacy</span>, the widespread adoption of AI in schools is not without significant <span class="vocab" data-word="hurdles">hurdles</span>. A primary concern revolves around data privacy. To function optimally, AI systems require vast datasets comprising student interactions, assessment scores, and even behavioral patterns. Critics argue that <span class="vocab" data-word="amassing">amassing</span> such sensitive information creates an <span class="vocab" data-word="unprecedented">unprecedented</span> vulnerability to cyber threats. Furthermore, there is an ongoing ethical debate regarding <span class="vocab" data-word="algorithmic">algorithmic</span> bias. If the data used to train these educational algorithms is inherently flawed or unrepresentative, the AI may <span class="vocab" data-word="perpetuate">perpetuate</span> existing educational <span class="vocab" data-word="inequities">inequities</span>, disproportionately disadvantaging marginalized student populations.</p>
+
+                        <p><span class="para-label">C</span> Another critical dimension of the AI debate is its impact on the role of the human educator. Skeptics frequently voice fears that AI systems are designed to render teachers <span class="vocab" data-word="obsolete">obsolete</span>. However, educational technologists advocate for a <span class="vocab" data-word="symbiotic">symbiotic</span> relationship. By automating administrative tasks—such as grading multiple-choice assessments, tracking attendance, and generating progress reports—AI liberates teachers from bureaucratic <span class="vocab" data-word="drudgery">drudgery</span>. This allows educators to reallocate their time towards fostering emotional intelligence, facilitating complex discussions, and providing mentorship—<span class="vocab" data-word="facets">facets</span> of education that require a human touch and remain beyond the <span class="vocab" data-word="capabilities">capabilities</span> of current AI models.</p>
+
+                        <p><span class="para-label">D</span> Real-world applications of AI are already demonstrating profound impacts in language learning. Natural Language Processing (NLP) technologies have evolved to a point where they can engage students in <span class="vocab" data-word="nuanced">nuanced</span>, open-ended conversations, correcting pronunciation and grammar instantly. For instance, in rural areas of developing nations where native English-speaking teachers are <span class="vocab" data-word="scarce">scarce</span>, AI chatbots serve as accessible conversational partners. This <span class="vocab" data-word="democratization">democratization</span> of language practice <span class="vocab" data-word="illustrates">illustrates</span> how AI can bridge geographical and socio-economic divides in education.</p>
+
+                        <p><span class="para-label">E</span> Looking forward, the true potential of AI in education may lie in predictive analytics. By synthesizing historical performance data with current engagement metrics, AI can identify students who are at risk of dropping out months before their grades reflect a decline. This early warning system enables educational institutions to implement targeted <span class="vocab" data-word="interventions">interventions</span>, offering counseling or personalized academic support. Ultimately, while AI introduces complex challenges, its capacity to <span class="vocab" data-word="customize">customize</span> learning and predict outcomes makes it an indispensable tool in the evolution of modern education.</p>
+                    </div>
+
+                    <!-- PASSAGE 2 -->
+                    <div class="passage-content" id="passage-2">
+                        <h2>The Evolution of Educational Technology</h2>
+
+                        <p><span class="para-label">A</span> The history of educational technology is a testament to humanity's continuous quest to optimize learning. Long before the digital age, the invention of the chalkboard in the early 19th century revolutionized the classroom. Prior to its introduction, students relied on individual slate boards, making group instruction highly inefficient. The chalkboard allowed a single teacher to present visual information to an entire class simultaneously, representing the first major <span class="vocab" data-word="technological">technological</span> leap in mass education. This was later followed by the overhead projector in the mid-20th century, which allowed educators to prepare complex diagrams in advance and maintain eye contact with students while presenting.</p>
+
+                        <p><span class="para-label">B</span> The late 20th century ushered in the era of computing, fundamentally altering the educational landscape. The introduction of personal computers in schools during the 1980s was initially met with both enthusiasm and <span class="vocab" data-word="skepticism">skepticism</span>. Early educational software was often rudimentary, focusing on rote memorization and drill-and-practice exercises. However, the true <span class="vocab" data-word="catalyst">catalyst</span> for change arrived in the 1990s with the proliferation of the World Wide Web. The internet transformed the computer from a standalone calculating machine into a gateway to limitless global information. Research dictates that this shift moved education away from a model of information scarcity to one of information <span class="vocab" data-word="abundance">abundance</span>.</p>
+
+                        <p><span class="para-label">C</span> As the internet matured, so did the tools built upon it. The early 2000s saw the rise of Learning Management Systems (LMS) like Blackboard and Moodle. These platforms <span class="vocab" data-word="centralized">centralized</span> course materials, communication, and grading, allowing for the <span class="vocab" data-word="proliferation">proliferation</span> of distance learning. However, it was the widespread adoption of smartphones and tablets that made 'anywhere, anytime' learning a tangible reality. Mobile learning (m-learning) <span class="vocab" data-word="facilitated">facilitated</span> microlearning—consuming educational content in short, focused bursts—which aligns closely with <span class="vocab" data-word="cognitive">cognitive</span> research on attention spans.</p>
+
+                        <p><span class="para-label">D</span> Today, we are on the <span class="vocab" data-word="precipice">precipice</span> of immersive learning technologies, specifically Virtual Reality (VR) and Augmented Reality (AR). Unlike traditional multimedia, VR isolates the user in a simulated environment, offering unparalleled <span class="vocab" data-word="experiential">experiential</span> learning. Medical students, for example, can perform virtual surgeries, making mistakes without real-world consequences. A 2023 study by Oxford University demonstrated that medical trainees using VR simulations achieved surgical <span class="vocab" data-word="proficiency">proficiency</span> 30% faster than those using only textbooks and observation. AR, conversely, overlays digital information onto the real world, enhancing field trips by projecting historical facts over ancient ruins or identifying biological species in real-time.</p>
+
+                        <p><span class="para-label">E</span> Despite these <span class="vocab" data-word="marvels">marvels</span>, the evolution of educational technology is characterized by a recurring pitfall: the 'technocentric' approach. Historically, institutions have heavily invested in hardware without proportionally investing in teacher training or developing <span class="vocab" data-word="robust">robust</span> pedagogical strategies to integrate the new tools. As Dr. Jane Arkwright notes, "Putting a tablet in every student's hand does not guarantee enhanced learning any more than placing a piano in every room guarantees musical <span class="vocab" data-word="genius">genius</span>." True educational advancement occurs only when technology is purposefully aligned with learning objectives.</p>
+                    </div>
+
+                    <!-- PASSAGE 3 -->
+                    <div class="passage-content" id="passage-3">
+                        <h2>The Future Relationship Between Human Learning and Artificial Intelligence</h2>
+
+                        <p><span class="para-label">A</span> As artificial intelligence systems approach levels of <span class="vocab" data-word="sophistication">sophistication</span> previously relegated to science fiction, the academic community is deeply divided over the long-term implications for human cognitive development. At the heart of this debate is the concept of 'cognitive offloading'—the reliance on external tools to reduce the mental effort required to perform tasks. Historically, cognitive offloading has been <span class="vocab" data-word="benign">benign</span>; the invention of writing offloaded memory, and the calculator offloaded arithmetic. However, advanced AI, capable of generating essays, solving complex calculus, and synthesizing research, represents a qualitative leap. Prominent neuroscientist Dr. Elias Thorne argues that excessive reliance on AI for analytical thinking could lead to 'cognitive <span class="vocab" data-word="atrophy">atrophy</span>,' warning that if students outsource critical thinking to machines, the neural pathways responsible for deep analysis may weaken over generations.</p>
+
+                        <p><span class="para-label">B</span> Conversely, the 'augmentation' camp, led by scholars like Dr. Sarah Lin, posits a radically different future. Lin suggests that AI will act as a 'cognitive <span class="vocab" data-word="exoskeleton">exoskeleton</span>,' elevating human intellectual capacity rather than diminishing it. In her view, just as the calculator freed mathematicians to focus on abstract theory rather than <span class="vocab" data-word="tedious">tedious</span> computation, AI will free students from the mechanics of information retrieval and basic synthesis. This, she argues, will <span class="vocab" data-word="propel">propel</span> education into a new era where the curriculum prioritizes creativity, complex problem-solving, and interdisciplinary innovation—skills that currently remain uniquely human. In this model, the student-AI dynamic is not parasitic, but deeply <span class="vocab" data-word="synergistic">synergistic</span>.</p>
+
+                        <p><span class="para-label">C</span> The implementation of highly advanced AI in education also raises profound questions regarding <span class="vocab" data-word="epistemology">epistemology</span>—the study of knowledge and justified belief. Traditional education places immense value on the *process* of reaching an answer. The struggle of research, the formulation of a <span class="vocab" data-word="hypothesis">hypothesis</span>, and the synthesis of disparate facts are considered vital for intellectual maturation. If an AI can provide a flawlessly synthesized answer to a complex historical question in seconds, the student is deprived of the cognitive struggle. Educational philosopher Julian Vane terms this the "illusion of understanding." Students may possess the correct output but lack the underlying structural comprehension of *how* that conclusion was derived, leading to a <span class="vocab" data-word="superficial">superficial</span> grasp of complex subjects.</p>
+
+                        <p><span class="para-label">D</span> Furthermore, the prospect of Brain-Computer Interfaces (BCIs) threatens to entirely redefine the boundary between biological and artificial intelligence. While currently in experimental medical phases, BCIs aim to create a direct communicative pathway between the brain's neural network and an external computing device. According to researchers at the Institute for Advanced Technology, within decades, students might be able to 'download' factual knowledge directly into their memory centers, bypassing traditional <span class="vocab" data-word="acquisition">acquisition</span> methods entirely. This speculative future forces society to question the very definition of learning. If knowledge is simply <span class="vocab" data-word="implanted">implanted</span>, education shifts from a process of mental cultivation to one of digital data transfer.</p>
+
+                        <p><span class="para-label">E</span> Beyond the neurological and philosophical implications, there is a pressing socio-economic <span class="vocab" data-word="imperative">imperative</span> to consider. The integration of advanced AI in elite educational institutions will likely <span class="vocab" data-word="accelerate">accelerate</span> rapidly, providing their students with highly personalized, 24/7 AI tutors. If public education systems, constrained by budget deficits, cannot provide equal access to these technologies, the resulting 'algorithmic divide' could <span class="vocab" data-word="exacerbate">exacerbate</span> global inequality to unprecedented levels. Students augmented by AI will enter the workforce with overwhelming advantages, creating an <span class="vocab" data-word="insurmountable">insurmountable</span> gap between the technologically enhanced elite and the biologically constrained majority.</p>
+
+                        <p><span class="para-label">F</span> In navigating this complex frontier, the consensus among moderate academics is the need for highly regulated <span class="vocab" data-word="frameworks">frameworks</span> regarding AI usage in schools. Rather than banning AI—a <span class="vocab" data-word="futile">futile</span> endeavor given its ubiquity—educators must design assessments that evaluate what AI cannot easily replicate: ethical reasoning, emotional intelligence, and original creative synthesis. The future of human learning will not be defined by how well we compete with AI, but by how skillfully we integrate it while fiercely guarding the elements of consciousness that make us inherently human.</p>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: QUESTIONS & NAVIGATOR -->
+                <div class="column right-col" id="right-col">
+                    <div class="tabs">
+                        <button class="tab-btn active" id="q-tab-1" onclick="switchTab(1)">Questions 1-13</button>
+                        <button class="tab-btn" id="q-tab-2" onclick="switchTab(2)">Questions 14-26</button>
+                        <button class="tab-btn" id="q-tab-3" onclick="switchTab(3)">Questions 27-40</button>
+                    </div>
+
+                    <!-- Questions container -->
+                    <div id="questions-container"></div>
+
+                    <!-- Sidebar / Navigator -->
+                    <div class="sidebar">
+                        <div class="nav-title">Questions Navigator</div>
+                        <div class="nav-grid" id="nav-grid">
+                            <!-- Nav buttons generated via JS -->
+                        </div>
+                        <div class="action-btns">
+                            <button class="btn-main btn-submit" onclick="submitTest()">Submit Test</button>
+                            <button class="btn-main btn-reset" onclick="resetTest()">Reset All</button>
+                            <button class="btn-main" style="background:var(--accent-blue);" onclick="toggleExplanations()" id="btn-show-exp" style="display:none;">Show Explanations</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- VOCAB TOOLTIP -->
+    <div class="tooltip" id="vocab-tooltip">
+        <div class="tt-word" id="tt-word"></div>
+        <div class="tt-pos" id="tt-pos"></div>
+        <div class="tt-vi" id="tt-vi"></div>
+        <div class="tt-ex" id="tt-ex"></div>
+    </div>
+
+    <!-- RESULTS MODAL -->
+    <div class="modal-overlay" id="results-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="result-header">
+                <h1 style="color:var(--navy-blue);">Test Results</h1>
+                <div class="result-score"><span id="res-score">0</span> / 40</div>
+                <div style="font-size: 1.5rem; color: var(--text-muted);">Score Percentage: <span id="res-percent" style="font-weight:bold; color:var(--text-main);">0</span>%</div>
+                <div class="result-band" id="res-band">Band 0.0</div>
+            </div>
+            
+            <h3>Performance Analysis</h3>
+            <div class="chart-container">
+                <div class="chart-correct" id="chart-c" style="width:0%">0</div>
+                <div class="chart-wrong" id="chart-w" style="width:0%">0</div>
+                <div class="chart-unanswered" id="chart-u" style="width:100%">40</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 30px; font-weight:bold;">
+                <span style="color:var(--correct);">■ Correct</span>
+                <span style="color:var(--wrong);">■ Incorrect</span>
+                <span style="color:var(--text-muted);">■ Unanswered</span>
+            </div>
+
+            <h3 style="margin-bottom:15px; border-bottom:2px solid var(--border-color); padding-bottom:5px;">Detailed Explanations</h3>
+            <div id="explanations-list">
+                <!-- Explanations injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================
+           DATA: VOCABULARY DICTIONARY (50 WORDS)
+        ======================================== */
+        const vocabDict = {
+            "integration": { pos: "noun", vi: "Sự tích hợp", ex: "The integration of AI changes everything." },
+            "paradigm": { pos: "noun", vi: "Mô hình, hệ chuẩn", ex: "A paradigm shift in education." },
+            "pedagogical": { pos: "adj", vi: "Thuộc về sư phạm", ex: "New pedagogical methods are required." },
+            "algorithms": { pos: "noun", vi: "Thuật toán", ex: "Machine learning algorithms analyze data." },
+            "curriculum": { pos: "noun", vi: "Chương trình giảng dạy", ex: "The curriculum must adapt to students." },
+            "empirical": { pos: "adj", vi: "Dựa trên kinh nghiệm/thực tế", ex: "Empirical evidence supports this theory." },
+            "efficacy": { pos: "noun", vi: "Tính hiệu quả", ex: "The efficacy of the drug was proven." },
+            "hurdles": { pos: "noun", vi: "Trở ngại", ex: "There are many hurdles to overcome." },
+            "amassing": { pos: "verb", vi: "Tích lũy, thu thập", ex: "Amassing large datasets is risky." },
+            "unprecedented": { pos: "adj", vi: "Chưa từng có", ex: "An unprecedented level of danger." },
+            "algorithmic": { pos: "adj", vi: "Thuộc thuật toán", ex: "Algorithmic bias is a serious issue." },
+            "perpetuate": { pos: "verb", vi: "Duy trì, làm cho kéo dài", ex: "This system may perpetuate inequality." },
+            "inequities": { pos: "noun", vi: "Sự bất bình đẳng", ex: "Educational inequities harm society." },
+            "obsolete": { pos: "adj", vi: "Lỗi thời", ex: "Typewriters are now obsolete." },
+            "symbiotic": { pos: "adj", vi: "Cộng sinh", ex: "A symbiotic relationship between human and AI." },
+            "drudgery": { pos: "noun", vi: "Công việc nặng nhọc/nhàm chán", ex: "AI relieves teachers of administrative drudgery." },
+            "facets": { pos: "noun", vi: "Khía cạnh", ex: "Many facets of education need a human touch." },
+            "capabilities": { pos: "noun", vi: "Khả năng", ex: "Beyond the capabilities of current tech." },
+            "nuanced": { pos: "adj", vi: "Nhiều sắc thái, tinh tế", ex: "A nuanced understanding of grammar." },
+            "scarce": { pos: "adj", vi: "Khan hiếm", ex: "Resources are scarce in rural areas." },
+            "democratization": { pos: "noun", vi: "Sự dân chủ hóa (tiếp cận rộng rãi)", ex: "The democratization of knowledge." },
+            "illustrates": { pos: "verb", vi: "Minh họa", ex: "This example illustrates the point clearly." },
+            "interventions": { pos: "noun", vi: "Sự can thiệp", ex: "Early interventions help struggling students." },
+            "customize": { pos: "verb", vi: "Tùy chỉnh", ex: "To customize learning for each child." },
+            "technological": { pos: "adj", vi: "Thuộc công nghệ", ex: "A major technological leap." },
+            "skepticism": { pos: "noun", vi: "Sự hoài nghi", ex: "Met with widespread skepticism." },
+            "catalyst": { pos: "noun", vi: "Chất xúc tác, nhân tố thúc đẩy", ex: "The internet was a catalyst for change." },
+            "abundance": { pos: "noun", vi: "Sự phong phú, dư thừa", ex: "An era of information abundance." },
+            "centralized": { pos: "verb", vi: "Tập trung hóa", ex: "LMS centralized course materials." },
+            "proliferation": { pos: "noun", vi: "Sự gia tăng nhanh chóng", ex: "The proliferation of smartphones." },
+            "facilitated": { pos: "verb", vi: "Tạo điều kiện", ex: "Technology facilitated microlearning." },
+            "cognitive": { pos: "adj", vi: "Thuộc về nhận thức", ex: "Cognitive research on memory." },
+            "precipice": { pos: "noun", vi: "Bờ vực (nghĩa bóng: điểm khởi đầu)", ex: "On the precipice of a new era." },
+            "experiential": { pos: "adj", vi: "Dựa trên trải nghiệm", ex: "Experiential learning is highly effective." },
+            "proficiency": { pos: "noun", vi: "Sự thành thạo", ex: "Achieved surgical proficiency faster." },
+            "marvels": { pos: "noun", vi: "Kỳ quan, điều kỳ diệu", ex: "Despite these technological marvels." },
+            "robust": { pos: "adj", vi: "Mạnh mẽ, vững chắc", ex: "Robust pedagogical strategies are needed." },
+            "genius": { pos: "noun", vi: "Thiên tài", ex: "It doesn't guarantee musical genius." },
+            "sophistication": { pos: "noun", vi: "Sự tinh vi, phức tạp", ex: "High levels of sophistication." },
+            "benign": { pos: "adj", vi: "Lành tính, vô hại", ex: "Historically, this process was benign." },
+            "atrophy": { pos: "noun", vi: "Sự teo đi, thoái hóa", ex: "Fears of cognitive atrophy." },
+            "exoskeleton": { pos: "noun", vi: "Bộ xương ngoài (nghĩa bóng: hỗ trợ)", ex: "AI acts as a cognitive exoskeleton." },
+            "tedious": { pos: "adj", vi: "Tẻ nhạt, chán ngắt", ex: "Free from tedious computation." },
+            "propel": { pos: "verb", vi: "Thúc đẩy", ex: "Propel education into a new era." },
+            "synergistic": { pos: "adj", vi: "Hiệp đồng, cộng hưởng", ex: "A highly synergistic relationship." },
+            "epistemology": { pos: "noun", vi: "Nhận thức luận", ex: "Questions regarding epistemology." },
+            "hypothesis": { pos: "noun", vi: "Giả thuyết", ex: "The formulation of a hypothesis." },
+            "superficial": { pos: "adj", vi: "Nông cạn, hời hợt", ex: "A superficial grasp of the subject." },
+            "acquisition": { pos: "noun", vi: "Sự tiếp thu, đạt được", ex: "Bypassing traditional knowledge acquisition." },
+            "implanted": { pos: "verb", vi: "Cấy ghép", ex: "Knowledge is simply implanted." },
+            "accelerate": { pos: "verb", vi: "Tăng tốc", ex: "Integration will accelerate rapidly." },
+            "exacerbate": { pos: "verb", vi: "Làm trầm trọng thêm", ex: "This could exacerbate inequality." },
+            "insurmountable": { pos: "adj", vi: "Không thể vượt qua", ex: "An insurmountable gap between groups." },
+            "frameworks": { pos: "noun", vi: "Khung pháp lý, khuôn khổ", ex: "Regulated frameworks are needed." },
+            "futile": { pos: "adj", vi: "Vô ích", ex: "Banning AI is a futile endeavor." }
+        };
+
+        /* ========================================
+           DATA: 40 IELTS QUESTIONS
+        ======================================== */
+        const questionsData = [
+            // PASSAGE 1 (Q1-13)
+            { id: 1, p: 1, type: "heading", text: "Paragraph A", opts: ["i. The ethical dilemma of flawed algorithms", "ii. The role of prediction in preventing academic failure", "iii. Shifting from uniform teaching to personalized learning", "iv. How AI helps remote language learners", "v. The enduring necessity of human teachers", "vi. Reallocating teacher time via automation"], ans: "iii", exp: "Paragraph A discusses moving from a 'one-size-fits-all' model to AI-driven systems that adapt to unique learning paces.", quote: "...has begun to dismantle this traditional framework... adapting the curriculum to suit their unique learning pace." },
+            { id: 2, p: 1, type: "heading", text: "Paragraph B", opts: ["i. The ethical dilemma of flawed algorithms", "ii. The role of prediction in preventing academic failure", "iii. Shifting from uniform teaching to personalized learning", "iv. How AI helps remote language learners", "v. The enduring necessity of human teachers", "vi. Reallocating teacher time via automation", "vii. Data privacy and systemic bias concerns"], ans: "vii", exp: "Paragraph B focuses on 'hurdles' like 'data privacy' and 'algorithmic bias'.", quote: "A primary concern revolves around data privacy... ongoing ethical debate regarding algorithmic bias." },
+            { id: 3, p: 1, type: "heading", text: "Paragraph C", opts: ["i. The ethical dilemma of flawed algorithms", "ii. The role of prediction in preventing academic failure", "iii. Shifting from uniform teaching to personalized learning", "iv. How AI helps remote language learners", "v. The enduring necessity of human teachers", "vi. Reallocating teacher time via automation", "vii. Data privacy and systemic bias concerns"], ans: "vi", exp: "Paragraph C mentions automating administrative tasks to liberate teachers.", quote: "By automating administrative tasks... AI liberates teachers from bureaucratic drudgery." },
+            { id: 4, p: 1, type: "heading", text: "Paragraph D", opts: ["i. The ethical dilemma of flawed algorithms", "ii. The role of prediction in preventing academic failure", "iii. Shifting from uniform teaching to personalized learning", "iv. How AI helps remote language learners", "v. The enduring necessity of human teachers", "vi. Reallocating teacher time via automation", "vii. Data privacy and systemic bias concerns"], ans: "iv", exp: "Paragraph D discusses NLP and AI chatbots serving as accessible conversational partners in rural areas.", quote: "...in rural areas of developing nations... AI chatbots serve as accessible conversational partners." },
+            { id: 5, p: 1, type: "heading", text: "Paragraph E", opts: ["i. The ethical dilemma of flawed algorithms", "ii. The role of prediction in preventing academic failure", "iii. Shifting from uniform teaching to personalized learning", "iv. How AI helps remote language learners", "v. The enduring necessity of human teachers", "vi. Reallocating teacher time via automation", "vii. Data privacy and systemic bias concerns"], ans: "ii", exp: "Paragraph E focuses on predictive analytics identifying students at risk of dropping out.", quote: "AI can identify students who are at risk of dropping out months before their grades reflect a decline." },
+            
+            { id: 6, p: 1, type: "tfng", text: "Students using AI adaptive learning showed better retention than those using traditional methods.", ans: "TRUE", exp: "Paragraph A states there was a 40% improvement in retention rates.", quote: "...demonstrated a 40% improvement in retention rates... compared to those taught via conventional methods." },
+            { id: 7, p: 1, type: "tfng", text: "Most teachers believe that AI will eventually replace them entirely.", ans: "NOT GIVEN", exp: "The text says 'Skeptics frequently voice fears', but does not specify if 'most teachers' believe this.", quote: "Skeptics frequently voice fears that AI systems are designed to render teachers obsolete." },
+            { id: 8, p: 1, type: "tfng", text: "AI algorithms can sometimes increase educational inequality.", ans: "TRUE", exp: "Paragraph B mentions flawed algorithms may disproportionately disadvantage marginalized populations.", quote: "...the AI may perpetuate existing educational inequities..." },
+            { id: 9, p: 1, type: "tfng", text: "Current AI models are highly capable of fostering emotional intelligence in students.", ans: "FALSE", exp: "Paragraph C says fostering emotional intelligence requires a human touch and is 'beyond the capabilities of current AI models'.", quote: "...fostering emotional intelligence... remain beyond the capabilities of current AI models." },
+            { id: 10, p: 1, type: "tfng", text: "Predictive analytics can only assess a student's past grades.", ans: "FALSE", exp: "Paragraph E says it synthesizes historical data with 'current engagement metrics'.", quote: "By synthesizing historical performance data with current engagement metrics..." },
+            
+            { id: 11, p: 1, type: "mcq", text: "What is the main challenge mentioned regarding data in Paragraph B?", opts: ["A. It is too expensive to store.", "B. It is difficult to gather from students.", "C. It poses cyber threat vulnerabilities and ethical bias risks.", "D. It requires too much computing power."], ans: "C", exp: "The paragraph cites 'vulnerability to cyber threats' and 'algorithmic bias'.", quote: "...creates an unprecedented vulnerability to cyber threats. Furthermore, there is an ongoing ethical debate regarding algorithmic bias." },
+            { id: 12, p: 1, type: "mcq", text: "According to Paragraph D, NLP technology is particularly useful for:", opts: ["A. Grading math exams.", "B. Instant pronunciation and grammar correction.", "C. Predicting student drop-out rates.", "D. Replacing textbooks."], ans: "B", exp: "The text explicitly states NLP can engage in conversations and correct pronunciation and grammar.", quote: "...engage students in nuanced, open-ended conversations, correcting pronunciation and grammar instantly." },
+            { id: 13, p: 1, type: "mcq", text: "What is the author's overall view of AI in education?", opts: ["A. It is too risky to implement.", "B. It is an indispensable tool despite its challenges.", "C. It will quickly replace all human educators.", "D. It is only useful for language learning."], ans: "B", exp: "The final sentence concludes that despite challenges, it is an 'indispensable tool'.", quote: "Ultimately, while AI introduces complex challenges, its capacity to customize learning and predict outcomes makes it an indispensable tool..." },
+
+            // PASSAGE 2 (Q14-26)
+            { id: 14, p: 2, type: "match-info", text: "Mention of a technology that allowed visual information to be shown to a large group for the first time.", opts: ["Paragraph A", "Paragraph B", "Paragraph C", "Paragraph D", "Paragraph E"], ans: "A", exp: "Paragraph A mentions the chalkboard as the first major leap allowing visual info to a whole class.", quote: "The chalkboard allowed a single teacher to present visual information to an entire class simultaneously..." },
+            { id: 15, p: 2, type: "match-info", text: "Reference to the failure of investing in hardware without proper teaching strategies.", opts: ["Paragraph A", "Paragraph B", "Paragraph C", "Paragraph D", "Paragraph E"], ans: "E", exp: "Paragraph E discusses the 'technocentric' pitfall.", quote: "Historically, institutions have heavily invested in hardware without proportionally investing in teacher training or developing robust pedagogical strategies..." },
+            { id: 16, p: 2, type: "match-info", text: "The concept of consuming educational content in short bursts.", opts: ["Paragraph A", "Paragraph B", "Paragraph C", "Paragraph D", "Paragraph E"], ans: "C", exp: "Paragraph C mentions microlearning via mobile devices.", quote: "Mobile learning (m-learning) facilitated microlearning—consuming educational content in short, focused bursts..." },
+            { id: 17, p: 2, type: "match-info", text: "A comparison between an isolated digital environment and one that overlays digital data on reality.", opts: ["Paragraph A", "Paragraph B", "Paragraph C", "Paragraph D", "Paragraph E"], ans: "D", exp: "Paragraph D contrasts VR (isolated) with AR (overlays).", quote: "Unlike traditional multimedia, VR isolates the user... AR, conversely, overlays digital information onto the real world..." },
+            { id: 18, p: 2, type: "match-info", text: "The transition from a lack of information to an overwhelming amount of it.", opts: ["Paragraph A", "Paragraph B", "Paragraph C", "Paragraph D", "Paragraph E"], ans: "B", exp: "Paragraph B mentions moving from information scarcity to abundance thanks to the internet.", quote: "...this shift moved education away from a model of information scarcity to one of information abundance." },
+            
+            { id: 19, p: 2, type: "completion", text: "Early software in the 1980s mainly focused on rote memorization and [____] exercises.", ans: "drill-and-practice", exp: "Paragraph B explicitly states this.", quote: "Early educational software was often rudimentary, focusing on rote memorization and drill-and-practice exercises." },
+            { id: 20, p: 2, type: "completion", text: "Systems like Blackboard are known as [____] Management Systems.", ans: "Learning", exp: "Paragraph C names them Learning Management Systems.", quote: "The early 2000s saw the rise of Learning Management Systems (LMS) like Blackboard..." },
+            { id: 21, p: 2, type: "completion", text: "Oxford University found that medical students using VR gained [____] much faster than traditional methods.", ans: "surgical proficiency", exp: "Paragraph D cites the Oxford study regarding surgical proficiency.", quote: "...medical trainees using VR simulations achieved surgical proficiency 30% faster..." },
+            { id: 22, p: 2, type: "completion", text: "According to Dr. Arkwright, technology only works when aligned with [____].", ans: "learning objectives", exp: "Paragraph E ends with this conclusion.", quote: "True educational advancement occurs only when technology is purposefully aligned with learning objectives." },
+            
+            { id: 23, p: 2, type: "mcq", text: "Why was the chalkboard revolutionary?", opts: ["A. It allowed students to write individually.", "B. It replaced the overhead projector.", "C. It allowed mass visual instruction.", "D. It was the first digital tool."], ans: "C", exp: "It allowed presenting to an 'entire class simultaneously'.", quote: "The chalkboard allowed a single teacher to present visual information to an entire class simultaneously..." },
+            { id: 24, p: 2, type: "mcq", text: "What was the main limitation of early 1980s computers in schools?", opts: ["A. They lacked internet access.", "B. The software was too complex.", "C. The software relied on basic memorization techniques.", "D. They were too expensive."], ans: "C", exp: "The software was 'rudimentary, focusing on rote memorization'.", quote: "Early educational software was often rudimentary, focusing on rote memorization..." },
+            { id: 25, p: 2, type: "mcq", text: "Microlearning is closely aligned with research on:", opts: ["A. Eye strain.", "B. Attention spans.", "C. Surgical methods.", "D. Distance learning."], ans: "B", exp: "Paragraph C states it aligns with cognitive research on attention spans.", quote: "...which aligns closely with cognitive research on attention spans." },
+            { id: 26, p: 2, type: "mcq", text: "The term 'technocentric' in Paragraph E refers to:", opts: ["A. Focusing on pedagogy over hardware.", "B. Investing heavily in hardware without teaching strategies.", "C. Using AI in classrooms.", "D. Building more computer labs."], ans: "B", exp: "It is described as investing in hardware without proportionally investing in teacher training.", quote: "Historically, institutions have heavily invested in hardware without proportionally investing in teacher training..." },
+
+            // PASSAGE 3 (Q27-40)
+            { id: 27, p: 3, type: "completion", text: "Dr. Elias Thorne warns that relying on AI might result in [____] if students stop analyzing deeply.", ans: "cognitive atrophy", exp: "Paragraph A states this term.", quote: "...excessive reliance on AI for analytical thinking could lead to 'cognitive atrophy'..." },
+            { id: 28, p: 3, type: "completion", text: "Dr. Sarah Lin believes AI will serve as a [____] to boost human intellect.", ans: "cognitive exoskeleton", exp: "Paragraph B states she views AI as a cognitive exoskeleton.", quote: "Lin suggests that AI will act as a 'cognitive exoskeleton,' elevating human intellectual capacity..." },
+            { id: 29, p: 3, type: "completion", text: "Julian Vane argues that getting perfect AI answers creates an [____] in students.", ans: "illusion of understanding", exp: "Paragraph C quotes Julian Vane using this phrase.", quote: "Educational philosopher Julian Vane terms this the 'illusion of understanding.'" },
+            { id: 30, p: 3, type: "completion", text: "In the future, Brain-Computer Interfaces could allow knowledge to be directly [____] into memory.", ans: "downloaded|implanted", exp: "Paragraph D mentions downloading or implanting knowledge.", quote: "...students might be able to 'download' factual knowledge directly into their memory centers..." },
+            { id: 31, p: 3, type: "completion", text: "A major risk is the creation of an [____] between wealthy students with AI and those without.", ans: "algorithmic divide", exp: "Paragraph E refers to this socio-economic gap as an algorithmic divide.", quote: "...the resulting 'algorithmic divide' could exacerbate global inequality..." },
+
+            { id: 32, p: 3, type: "mcq", text: "According to the passage, the invention of writing is an example of:", opts: ["A. Cognitive atrophy", "B. Benign cognitive offloading", "C. Epistemology", "D. Synergistic learning"], ans: "B", exp: "Paragraph A states writing was a benign form of cognitive offloading.", quote: "Historically, cognitive offloading has been benign; the invention of writing offloaded memory..." },
+            { id: 33, p: 3, type: "mcq", text: "What is epistemology as defined in the text?", opts: ["A. The study of brain interfaces", "B. The study of teaching methods", "C. The study of knowledge and justified belief", "D. The study of inequality"], ans: "C", exp: "Paragraph C explicitly defines epistemology.", quote: "...epistemology—the study of knowledge and justified belief." },
+            { id: 34, p: 3, type: "mcq", text: "Why do moderate academics believe banning AI is a bad idea?", opts: ["A. It is too expensive to ban.", "B. AI is already ubiquitous, making it futile.", "C. AI makes students smarter.", "D. Governments require its use."], ans: "B", exp: "Paragraph F says banning AI is a 'futile endeavor given its ubiquity'.", quote: "Rather than banning AI—a futile endeavor given its ubiquity..." },
+            { id: 35, p: 3, type: "mcq", text: "What should future assessments evaluate instead of rote knowledge?", opts: ["A. Memory capacity", "B. Ethical reasoning, emotional intelligence, and original synthesis", "C. Ability to use calculators", "D. Typing speed"], ans: "B", exp: "Paragraph F lists these three uniquely human traits.", quote: "...evaluate what AI cannot easily replicate: ethical reasoning, emotional intelligence, and original creative synthesis." },
+            
+            { id: 36, p: 3, type: "tfng", text: "Dr. Sarah Lin argues that AI makes the process of information retrieval completely unnecessary for everyone.", ans: "NOT GIVEN", exp: "She says it frees students from the mechanics of retrieval, but doesn't say it's 'completely unnecessary for everyone'.", quote: "...AI will free students from the mechanics of information retrieval..." },
+            { id: 37, p: 3, type: "tfng", text: "Brain-Computer Interfaces are currently widely used in public high schools.", ans: "FALSE", exp: "Paragraph D states they are 'currently in experimental medical phases'.", quote: "While currently in experimental medical phases..." },
+            { id: 38, p: 3, type: "tfng", text: "AI integration in elite schools is predicted to happen faster than in public schools.", ans: "TRUE", exp: "Paragraph E states integration in elite schools will accelerate rapidly, while public systems are constrained by budgets.", quote: "The integration of advanced AI in elite educational institutions will likely accelerate rapidly... If public education systems, constrained by budget deficits, cannot provide equal access..." },
+            { id: 39, p: 3, type: "tfng", text: "Julian Vane believes that the struggle of research is unimportant.", ans: "FALSE", exp: "Paragraph C implies Vane and traditional education value the struggle deeply.", quote: "The struggle of research... are considered vital for intellectual maturation." },
+            { id: 40, p: 3, type: "tfng", text: "The author concludes that human learning must focus on integrating AI while protecting human consciousness.", ans: "TRUE", exp: "The final sentence of the text affirms this conclusion.", quote: "The future of human learning will not be defined by how well we compete with AI, but by how skillfully we integrate it while fiercely guarding the elements of consciousness..." }
+        ];
+
+        /* ========================================
+           STATE MANAGEMENT & INIT
+        ======================================== */
+        let answers = JSON.parse(localStorage.getItem('ielts_answers')) || {};
+        let timeLeft = 90 * 60; // 90 mins
+        let timerInterval;
+
+        function init() {
+            renderQuestions();
+            renderNavigator();
+            setupVocabTooltips();
+            startTimer();
+            updateProgress();
+            
+            // Check theme
+            if(localStorage.getItem('ielts_theme') === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+        }
+
+        /* ========================================
+           UI RENDER FUNCTIONS
+        ======================================== */
+        function switchTab(num) {
+            // Passages
+            document.querySelectorAll('.passage-content').forEach(p => p.classList.remove('active'));
+            document.getElementById(`passage-${num}`).classList.add('active');
+            
+            // Passage Tabs
+            document.querySelectorAll('.left-col .tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.left-col .tabs button:nth-child(${num})`).classList.add('active');
+
+            // Questions Tabs (Optional sync, but user might want to scroll independent)
+            document.querySelectorAll('.right-col .tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`q-tab-${num}`).classList.add('active');
+
+            // Scroll questions to appropriate section smoothly
+            let firstQId = num === 1 ? 1 : num === 2 ? 14 : 27;
+            let targetQ = document.getElementById(`q-card-${firstQId}`);
+            if(targetQ) {
+                document.getElementById('right-col').scrollTo({
+                    top: targetQ.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            questionsData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = `q-card ${answers[q.id] ? 'answered' : ''}`;
+                card.id = `q-card-${q.id}`;
+
+                // Add section headers
+                if(q.id === 1) container.innerHTML += `<div class="q-instructions">Questions 1-5: Matching Headings (Passage 1)</div>`;
+                if(q.id === 6) container.innerHTML += `<div class="q-instructions">Questions 6-10: True / False / Not Given</div>`;
+                if(q.id === 11) container.innerHTML += `<div class="q-instructions">Questions 11-13: Multiple Choice</div>`;
+                if(q.id === 14) container.innerHTML += `<div class="q-instructions">Questions 14-18: Matching Information (Passage 2)</div>`;
+                if(q.id === 19) container.innerHTML += `<div class="q-instructions">Questions 19-22: Sentence Completion (NO MORE THAN TWO WORDS)</div>`;
+                if(q.id === 23) container.innerHTML += `<div class="q-instructions">Questions 23-26: Multiple Choice</div>`;
+                if(q.id === 27) container.innerHTML += `<div class="q-instructions">Questions 27-31: Summary Completion (Passage 3 - NO MORE THAN TWO WORDS)</div>`;
+                if(q.id === 32) container.innerHTML += `<div class="q-instructions">Questions 32-35: Multiple Choice</div>`;
+                if(q.id === 36) container.innerHTML += `<div class="q-instructions">Questions 36-40: True / False / Not Given</div>`;
+
+                let content = `<div class="q-num">${q.id}</div><div class="q-text">${q.text}</div>`;
+
+                if (q.type === 'heading' || q.type === 'match-info') {
+                    let optsHtml = q.opts.map(o => `<option value="${o.split('.')[0]}">${o}</option>`).join('');
+                    let savedVal = answers[q.id] || '';
+                    content += `<select onchange="saveAnswer(${q.id}, this.value)">
+                        <option value="">-- Select Answer --</option>
+                        ${optsHtml}
+                    </select>`;
+                    // Need to set value after innerHTML
+                    setTimeout(() => {
+                        let sel = card.querySelector('select');
+                        if(sel && savedVal) sel.value = savedVal;
+                    }, 0);
+                } 
+                else if (q.type === 'tfng' || q.type === 'mcq') {
+                    let groupHtml = `<div class="radio-group">`;
+                    let opts = q.type === 'tfng' ? ["TRUE", "FALSE", "NOT GIVEN"] : q.opts;
+                    opts.forEach(opt => {
+                        let val = q.type === 'tfng' ? opt : opt.charAt(0);
+                        let isChecked = answers[q.id] === val ? 'checked' : '';
+                        let isSelected = answers[q.id] === val ? 'selected' : '';
+                        groupHtml += `<label class="radio-label ${isSelected}">
+                            <input type="radio" name="q${q.id}" value="${val}" ${isChecked} onchange="saveAnswer(${q.id}, '${val}')">
+                            ${opt}
+                        </label>`;
+                    });
+                    groupHtml += `</div>`;
+                    content += groupHtml;
+                }
+                else if (q.type === 'completion') {
+                    let savedVal = answers[q.id] || '';
+                    content += `<input type="text" placeholder="Type answer here..." value="${savedVal}" onkeyup="saveAnswer(${q.id}, this.value)">`;
+                }
+
+                card.innerHTML = content;
+                container.appendChild(card);
+            });
+        }
+
+        function renderNavigator() {
+            const grid = document.getElementById('nav-grid');
+            grid.innerHTML = '';
+            for(let i=1; i<=40; i++) {
+                let btn = document.createElement('button');
+                btn.className = `nav-btn ${answers[i] && answers[i].trim() !== '' ? 'filled' : ''}`;
+                btn.id = `nav-btn-${i}`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    document.getElementById('right-col').scrollTo({
+                        top: document.getElementById(`q-card-${i}`).offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                };
+                grid.appendChild(btn);
+            }
+        }
+
+        /* ========================================
+           INTERACTION & LOGIC
+        ======================================== */
+        function saveAnswer(id, val) {
+            answers[id] = val.trim();
+            localStorage.setItem('ielts_answers', JSON.stringify(answers));
+            
+            // Update UI
+            document.getElementById(`q-card-${id}`).classList.add('answered');
+            if(val === '') document.getElementById(`q-card-${id}`).classList.remove('answered');
+            
+            // Update Radio visuals
+            let card = document.getElementById(`q-card-${id}`);
+            if(card.querySelector('.radio-group')) {
+                card.querySelectorAll('.radio-label').forEach(l => l.classList.remove('selected'));
+                let checked = card.querySelector('input:checked');
+                if(checked) checked.closest('.radio-label').classList.add('selected');
+            }
+
+            renderNavigator();
+            updateProgress();
+        }
+
+        function updateProgress() {
+            let answeredCount = Object.keys(answers).filter(k => answers[k] !== '').length;
+            let percent = (answeredCount / 40) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            let isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('ielts_theme', isDark ? 'dark' : 'light');
+        }
+
+        /* ========================================
+           VOCAB TOOLTIP
+        ======================================== */
+        function setupVocabTooltips() {
+            const tooltips = document.querySelectorAll('.vocab');
+            const ttBox = document.getElementById('vocab-tooltip');
+            
+            tooltips.forEach(t => {
+                t.addEventListener('mouseenter', (e) => {
+                    let word = t.getAttribute('data-word');
+                    let data = vocabDict[word];
+                    if(!data) return;
+
+                    document.getElementById('tt-word').innerText = word;
+                    document.getElementById('tt-pos').innerText = data.pos;
+                    document.getElementById('tt-vi').innerText = data.vi;
+                    document.getElementById('tt-ex').innerText = `"${data.ex}"`;
+
+                    ttBox.classList.add('show');
+                    
+                    // Position
+                    let rect = t.getBoundingClientRect();
+                    let ttRect = ttBox.getBoundingClientRect();
+                    
+                    let top = rect.bottom + 10;
+                    let left = rect.left;
+                    
+                    if(left + ttRect.width > window.innerWidth) left = window.innerWidth - ttRect.width - 20;
+                    if(top + ttRect.height > window.innerHeight) top = rect.top - ttRect.height - 10;
+
+                    ttBox.style.top = top + 'px';
+                    ttBox.style.left = left + 'px';
+                });
+
+                t.addEventListener('mouseleave', () => {
+                    ttBox.classList.remove('show');
+                });
+            });
+        }
+
+        /* ========================================
+           TIMER
+        ======================================== */
+        function startTimer() {
+            const tDisplay = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitTest();
+                    return;
+                }
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                tDisplay.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+                
+                if(timeLeft < 300) tDisplay.classList.add('timer-danger');
+            }, 1000);
+        }
+
+        /* ========================================
+           GRADING & SUBMISSION
+        ======================================== */
+        function submitTest() {
+            clearInterval(timerInterval);
+            let score = 0;
+            let correctIds = [];
+            let wrongIds = [];
+            let unansIds = [];
+
+            questionsData.forEach(q => {
+                let userAns = (answers[q.id] || '').toLowerCase().trim();
+                let isCorrect = false;
+
+                if (q.type === 'completion') {
+                    // Handle multiple correct answers split by |
+                    let accepted = q.ans.toLowerCase().split('|');
+                    if (accepted.includes(userAns)) isCorrect = true;
+                } else {
+                    if (userAns === q.ans.toLowerCase()) isCorrect = true;
+                }
+
+                if(userAns === '') {
+                    unansIds.push(q.id);
+                } else if (isCorrect) {
+                    score++;
+                    correctIds.push(q.id);
+                } else {
+                    wrongIds.push(q.id);
+                }
+            });
+
+            // Update Navigator Colors
+            correctIds.forEach(id => { document.getElementById(`nav-btn-${id}`).className = 'nav-btn correct'; });
+            wrongIds.forEach(id => { document.getElementById(`nav-btn-${id}`).className = 'nav-btn wrong'; });
+
+            showResults(score, correctIds.length, wrongIds.length, unansIds.length);
+        }
+
+        function calculateBand(score) {
+            if(score >= 39) return "9.0";
+            if(score >= 37) return "8.5";
+            if(score >= 35) return "8.0";
+            if(score >= 33) return "7.5";
+            if(score >= 30) return "7.0";
+            if(score >= 27) return "6.5";
+            if(score >= 23) return "6.0";
+            if(score >= 20) return "5.5";
+            if(score >= 15) return "5.0";
+            if(score >= 13) return "4.5";
+            if(score >= 10) return "4.0";
+            return "< 4.0";
+        }
+
+        function showResults(score, c, w, u) {
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-percent').innerText = Math.round((score/40)*100);
+            document.getElementById('res-band').innerText = `Band ${calculateBand(score)}`;
+
+            document.getElementById('chart-c').style.width = `${(c/40)*100}%`;
+            document.getElementById('chart-c').innerText = c > 0 ? c : '';
+            document.getElementById('chart-w').style.width = `${(w/40)*100}%`;
+            document.getElementById('chart-w').innerText = w > 0 ? w : '';
+            document.getElementById('chart-u').style.width = `${(u/40)*100}%`;
+            document.getElementById('chart-u').innerText = u > 0 ? u : '';
+
+            generateExplanations();
+            document.getElementById('btn-show-exp').style.display = 'block';
+            document.getElementById('results-modal').style.display = 'flex';
+        }
+
+        function generateExplanations() {
+            let container = document.getElementById('explanations-list');
+            container.innerHTML = '';
+
+            questionsData.forEach(q => {
+                let userAns = answers[q.id] || 'Not answered';
+                let isCorrect = false;
+                
+                if (q.type === 'completion') {
+                    let accepted = q.ans.toLowerCase().split('|');
+                    if (accepted.includes(userAns.toLowerCase())) isCorrect = true;
+                } else {
+                    if (userAns.toLowerCase() === q.ans.toLowerCase()) isCorrect = true;
+                }
+
+                let displayAns = q.ans.includes('|') ? q.ans.replace(/\|/g, ' OR ') : q.ans;
+
+                let html = `
+                    <div class="exp-box ${isCorrect ? 'correct' : 'wrong'}">
+                        <div class="exp-title">
+                            <span>Question ${q.id} ${isCorrect ? '✅' : '❌'}</span>
+                            <span style="font-size:0.9rem; color:var(--text-muted);">Your answer: ${userAns}</span>
+                        </div>
+                        <div class="exp-text"><strong>Correct Answer:</strong> <span class="exp-ans">${displayAns}</span></div>
+                        <div class="exp-text">${q.exp}</div>
+                        <div class="exp-quote">"${q.quote}"</div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('results-modal').style.display = 'none';
+        }
+
+        function toggleExplanations() {
+            document.getElementById('results-modal').style.display = 'flex';
+        }
+
+        function resetTest() {
+            if(confirm('Are you sure you want to reset all answers?')) {
+                localStorage.removeItem('ielts_answers');
+                location.reload();
+            }
+        }
+
+        // Run
+        init();
+
+    </script>
+</body>
+</html>

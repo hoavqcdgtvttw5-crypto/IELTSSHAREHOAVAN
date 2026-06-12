@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS B2: The Future of Environmental Sustainability</title>
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --primary-blue: #2c5282;
+            --light-blue: #ebf4ff;
+            --border-blue: #bee3f8;
+            --notebook-bg: #ffffff;
+            --notebook-line: #e2e8f0;
+            --notebook-margin: #fc8181;
+            --text-dark: #2d3748;
+            --text-gray: #4a5568;
+            --vocab-highlight: #fefcbf;
+            --vocab-hover: #faf089;
+            --correct: #48bb78;
+            --wrong: #f56565;
+            --btn-blue: #4299e1;
+            --btn-blue-hover: #3182ce;
+            
+            /* 3D Colors for Questions */
+            --3d-bg-1: #ffd3b6;
+            --3d-shadow-1: #e0b498;
+            --3d-bg-2: #ffaaa5;
+            --3d-shadow-2: #e08b86;
+            --3d-bg-3: #a8e6cf;
+            --3d-shadow-3: #89c7b0;
+            --3d-bg-4: #dcedc1;
+            --3d-shadow-4: #bdce9a;
+            --3d-bg-5: #a4ebf3;
+            --3d-shadow-5: #85cbd3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-blue);
+            color: var(--text-dark);
+            line-height: 1.8;
+            padding: 20px;
+            height: 100vh;
+            overflow: hidden; /* Prevent body scroll, use column scroll */
+        }
+        
+        /* Two-Column Layout Container */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Reading Section Container (Left Column) */
+        .reading-column {
+            flex: 1;
+            background-color: var(--notebook-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            position: relative;
+            padding: 40px 40px 40px 80px;
+            background-image: repeating-linear-gradient(transparent, transparent 31px, var(--notebook-line) 31px, var(--notebook-line) 32px);
+            background-attachment: local;
+        }
+
+        /* Red margin line */
+        .reading-column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 55px;
+            width: 2px;
+            background-color: var(--notebook-margin);
+            z-index: 1;
+        }
+
+        /* Binder holes for reading section */
+        .binder-holes {
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: 40px;
+            width: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+        }
+
+        .hole {
+            width: 18px;
+            height: 18px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Questions Section Container (Right Column) */
+        .questions-column {
+            flex: 1;
+            background-color: #f7fafc;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            border: 4px solid var(--border-blue);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            border: 3px dashed var(--btn-blue);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Fixed Timer Styling */
+        .fixed-timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: 4px solid #f6e05e;
+            border-radius: 15px;
+            padding: 10px 15px;
+            text-align: center;
+            box-shadow: 0 8px 0px #d69e2e, 0 15px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateY(0);
+            transition: transform 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-display {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e53e3e;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 0px #fff, 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .timer-controls button {
+            background: var(--text-dark);
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 0px #1a202c;
+            transition: all 0.1s;
+        }
+
+        .timer-controls button:active {
+            transform: translateY(3px);
+            box-shadow: 0 0px 0px #1a202c;
+        }
+
+        /* Reading Passage Text */
+        .reading-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .reading-content h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+        }
+
+        .reading-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-size: 1.15rem;
+            line-height: 2;
+        }
+
+        /* Vocabulary Interactive */
+        .vocab {
+            background-color: var(--vocab-highlight);
+            border-bottom: 2px dashed #d69e2e;
+            cursor: pointer;
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #b7791f;
+            transition: all 0.2s;
+        }
+
+        .vocab:hover {
+            background-color: var(--vocab-hover);
+            transform: scale(1.05);
+            display: inline-block;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Questions Section Formatting */
+        h2.section-title {
+            color: #fff;
+            background-color: var(--primary-blue);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 0px #1a365d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-instructions {
+            font-style: italic;
+            color: var(--text-gray);
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            border-left: 4px solid var(--text-gray);
+        }
+
+        /* 3D Question Blocks */
+        .question-block {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        
+        #section-1-container .question-block {
+            background-color: var(--3d-bg-1);
+            box-shadow: 0 8px 0px var(--3d-shadow-1), 0 10px 15px rgba(0,0,0,0.1);
+        }
+        #section-2-container .question-block {
+            background-color: var(--3d-bg-2);
+            box-shadow: 0 8px 0px var(--3d-shadow-2), 0 10px 15px rgba(0,0,0,0.1);
+        }
+        #section-3-container .question-block {
+            background-color: var(--3d-bg-3);
+            box-shadow: 0 8px 0px var(--3d-shadow-3), 0 10px 15px rgba(0,0,0,0.1);
+        }
+        #section-4-container .question-block {
+            background-color: var(--3d-bg-4);
+            box-shadow: 0 8px 0px var(--3d-shadow-4), 0 10px 15px rgba(0,0,0,0.1);
+        }
+        #section-5-container .question-block {
+            background-color: var(--3d-bg-5);
+            box-shadow: 0 8px 0px var(--3d-shadow-5), 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-block:hover {
+            transform: translateY(-3px);
+        }
+
+        .question-text {
+            font-weight: 800;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #2d3748;
+        }
+
+        .options-list {
+            list-style: none;
+        }
+
+        .options-list li {
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.6);
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .options-list li:hover {
+            background: rgba(255,255,255,0.9);
+        }
+
+        /* Custom Radio Buttons */
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-dark);
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+            cursor: pointer;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: var(--btn-blue);
+            border-radius: 50%;
+        }
+        
+        /* TFNG Radios */
+        .tfng-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .tfng-options label {
+            background: rgba(255,255,255,0.7);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Inputs */
+        input[type="text"], select, textarea {
+            font-family: inherit;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input[type="text"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--btn-blue);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+        }
+
+        input[type="text"] {
+            width: 200px;
+            margin: 0 5px;
+            border-bottom: 3px solid var(--text-dark);
+            border-top: none; border-left: none; border-right: none;
+            background: transparent;
+            border-radius: 0;
+            padding: 5px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            text-align: center;
+        }
+
+        select {
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            resize: vertical;
+            margin-top: 10px;
+        }
+
+        .matching-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .matching-label {
+            font-weight: bold;
+            background: rgba(255,255,255,0.5);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            padding-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: white;
+            background-color: #48bb78;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 0px #2f855a, 0 10px 15px rgba(0,0,0,0.1);
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+        }
+
+        .action-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0px #2f855a;
+        }
+
+        .action-btn.secondary {
+            background-color: var(--btn-blue);
+            box-shadow: 0 6px 0px #2b6cb0, 0 10px 15px rgba(0,0,0,0.1);
+            font-size: 1rem;
+            padding: 12px 20px;
+        }
+        
+        .action-btn.secondary:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0px #2b6cb0;
+        }
+        
+        .action-btn.danger {
+            background-color: #f56565;
+            box-shadow: 0 6px 0px #c53030;
+        }
+        .action-btn.danger:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0px #c53030;
+        }
+
+        /* Results & Explanations */
+        #results-container {
+            display: none;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border: 4px solid var(--correct);
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--correct);
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+            margin: 10px 0;
+        }
+
+        .band-estimation {
+            font-size: 1.8rem;
+            color: #2b6cb0;
+            font-weight: 900;
+            background: #fff;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 3px dashed #2b6cb0;
+            margin: 15px 0;
+        }
+
+        #explanations-container {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .explanation-box {
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-left: 8px solid var(--text-gray);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .explanation-box.is-correct { border-left-color: var(--correct); }
+        .explanation-box.is-wrong { border-left-color: var(--wrong); }
+
+        .correct-status { color: var(--correct); font-weight: 900; font-size: 1.2rem;}
+        .wrong-status { color: var(--wrong); font-weight: 900; font-size: 1.2rem;}
+        .eng-exp { font-style: italic; color: var(--primary-blue); margin-top: 10px; font-weight: 500;}
+        .vie-exp { color: var(--text-gray); margin-top: 5px; background: #f7fafc; padding: 10px; border-radius: 5px;}
+
+        /* Vocab Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            position: relative;
+            text-align: left;
+            border-top: 10px solid var(--primary-blue);
+            border-bottom: 10px solid #d69e2e;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-gray);
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        
+        .close-btn:hover { color: var(--wrong); }
+
+        .modal-word { font-size: 2.5rem; font-weight: 900; color: var(--primary-blue); text-transform: capitalize; margin-bottom: 5px;}
+        .modal-ipa { font-family: 'Courier New', Courier, monospace; color: #718096; font-size: 1.2rem; margin-bottom: 15px; font-weight: bold;}
+        .modal-pos { display: inline-block; background: #edf2f7; padding: 5px 12px; border-radius: 20px; font-size: 1rem; font-weight: bold; color: #4a5568; margin-bottom: 20px; border: 2px solid #cbd5e0;}
+        .modal-meanings div { margin-bottom: 12px; font-size: 1.1rem;}
+        .modal-en { font-weight: bold; color: #2d3748;}
+        .modal-vi { color: #4a5568; }
+        .modal-ex { font-style: italic; background: #ebf8ff; padding: 15px; border-left: 5px solid var(--btn-blue); margin-top: 20px; border-radius: 0 8px 8px 0; font-size: 1.1rem; color: #2c5282;}
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-layout {
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+            body { overflow: auto; height: auto;}
+            .reading-column, .questions-column {
+                overflow: visible;
+            }
+            .fixed-timer {
+                position: sticky;
+                top: 10px;
+                right: auto;
+                margin: 0 auto 20px auto;
+                width: 250px;
+                z-index: 100;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .reading-column {
+                padding: 30px 20px 30px 50px;
+            }
+            .reading-column::before { left: 35px; }
+            .binder-holes { left: 10px; }
+            .tfng-options { flex-direction: column; gap: 5px; }
+            input[type="text"] { width: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Fixed Timer HTML -->
+<div class="fixed-timer">
+    <div style="font-weight: bold; color: #d69e2e; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Time Remaining</div>
+    <div class="time-display" id="time-display">60:00</div>
+    <div class="timer-controls">
+        <button onclick="startTimer()" style="background:#48bb78;">Start</button>
+        <button onclick="pauseTimer()" style="background:#ed8936;">Pause</button>
+        <button onclick="resetTimer()" style="background:#e53e3e;">Reset</button>
+    </div>
+</div>
+
+<div class="main-layout">
+    
+    <!-- LEFT COLUMN: Reading Section -->
+    <div class="reading-column">
+        <div class="binder-holes">
+            <div class="hole"></div><div class="hole"></div><div class="hole"></div>
+            <div class="hole"></div><div class="hole"></div><div class="hole"></div>
+            <div class="hole"></div><div class="hole"></div><div class="hole"></div>
+            <div class="hole"></div><div class="hole"></div><div class="hole"></div>
+        </div>
+
+        <header>
+            <h1>IELTS Reading Practice</h1>
+            <div class="subtitle">Level: B2 | Environment & Climate Change</div>
+        </header>
+
+        <!-- Reading Content -->
+        <div class="reading-content" id="passage-container">
+            <h2>The Future of Environmental Sustainability</h2>
+            
+            <p>The dawn of the 21st century has been undeniably defined by the escalating urgency of climate change. For decades, scientific consensus has warned that <span class="vocab" data-word="anthropogenic">anthropogenic</span> activities, primarily the combustion of fossil fuels and extensive deforestation, have drastically accelerated the greenhouse effect. The consequent rise in global temperatures has led to severe meteorological anomalies, rising sea levels, and the disruption of <span class="vocab" data-word="ecosystems">ecosystems</span> worldwide. In response, a global <span class="vocab" data-word="paradigm">paradigm</span> shift toward <span class="vocab" data-word="sustainability">sustainability</span> has become not merely an option, but an absolute <span class="vocab" data-word="imperative">imperative</span>. This transition requires a <span class="vocab" data-word="multidimensional">multidimensional</span> approach, integrating technological innovation, stringent government policies, and profound changes in individual behavior to achieve meaningful climate <span class="vocab" data-word="mitigation">mitigation</span>.</p>
+
+            <p>A cornerstone of this environmental strategy is the rapid <span class="vocab" data-word="transition">transition</span> to <span class="vocab" data-word="renewable">renewable</span> energy. Historically, industrial economies have relied heavily on coal, oil, and natural gas. However, the environmental cost of these resources is no longer sustainable. Solar and wind power have emerged as highly <span class="vocab" data-word="viable">viable</span> alternatives, driven by plummeting production costs and improved technological efficiency. Yet, the <span class="vocab" data-word="intermittency">intermittency</span> of these energy sources remains a significant hurdle; the sun does not always shine, and the wind does not always blow. Overcoming this requires massive investments in advanced battery storage technology and the modernization of electrical grid <span class="vocab" data-word="infrastructure">infrastructure</span>. Once these grid challenges are resolved, the widespread <span class="vocab" data-word="deployment">deployment</span> of renewables will drastically cut global carbon <span class="vocab" data-word="emissions">emissions</span>.</p>
+
+            <p>Simultaneously, the realm of green technology is experiencing <span class="vocab" data-word="unprecedented">unprecedented</span> growth. Engineers and scientists are pioneering solutions designed to reverse environmental damage. Carbon capture and storage (CCS) technology, for instance, aims to extract carbon dioxide directly from industrial sources before it enters the atmosphere, sequestering it deep underground. Furthermore, the <span class="vocab" data-word="integration">integration</span> of Artificial Intelligence (AI) in energy management is allowing for the <span class="vocab" data-word="optimization">optimization</span> of power consumption in large <span class="vocab" data-word="metropolitan">metropolitan</span> areas. Smart buildings can now autonomously adjust heating, cooling, and lighting based on real-time occupancy, thereby reducing energy waste significantly. While the financial <span class="vocab" data-word="feasibility">feasibility</span> of some of these <span class="vocab" data-word="synthetic">synthetic</span> technologies is still debated, their potential impact is universally acknowledged.</p>
+
+            <p>Beyond the energy sector, the pervasive issue of plastic pollution threatens marine and terrestrial environments. Plastics, being synthetic polymers, are notoriously durable and resistant to natural degradation. Millions of tons of plastic waste end up in the oceans annually, breaking down into <span class="vocab" data-word="microplastics">microplastics</span>—tiny particles that are ingested by marine life and subsequently enter the human food chain. The <span class="vocab" data-word="ubiquitous">ubiquitous</span> nature of plastic makes it a formidable challenge. Current mitigation efforts focus on shifting away from single-use plastics towards <span class="vocab" data-word="biodegradable">biodegradable</span> materials. Furthermore, there is a strong push toward establishing a <span class="vocab" data-word="circular">circular</span> economy, an economic model designed to minimize waste and make the most of resources by keeping materials in use for as long as possible. This systemic change is essential to halt the <span class="vocab" data-word="accumulation">accumulation</span> of non-degradable waste.</p>
+
+            <p>The health of the planet is also intrinsically linked to its <span class="vocab" data-word="biodiversity">biodiversity</span>. Ecosystems rely on a complex web of interacting species, and the loss of any single species can trigger a cascade of ecological consequences. Currently, the Earth is facing what scientists term the 'sixth mass <span class="vocab" data-word="extinction">extinction</span>', driven primarily by <span class="vocab" data-word="habitat">habitat</span> destruction for agriculture and urban expansion. <span class="vocab" data-word="conservation">Conservation</span> strategies are vital in this regard. The establishment of protected marine and terrestrial reserves is a primary defense mechanism. Additionally, <span class="vocab" data-word="ecological">ecological</span> restoration projects aim to return degraded environments to their natural states, thereby reviving local flora and fauna. The preservation of the Amazon rainforest, often referred to as the lungs of the Earth, is a critical focal point of global conservation efforts.</p>
+
+            <p>As the human population continues to grow, <span class="vocab" data-word="urbanization">urbanization</span> presents both challenges and opportunities. By 2050, it is projected that nearly 70% of the global population will reside in cities. Traditional city planning has often prioritized vehicular traffic, leading to severe air pollution and the 'urban heat island' effect. To combat this, modern urban planners are designing <span class="vocab" data-word="resilient">resilient</span>, sustainable cities. This involves the <span class="vocab" data-word="implementation">implementation</span> of green infrastructure, such as vertical gardens and expansive urban parks, which absorb carbon dioxide and cool the environment. Furthermore, prioritizing robust public transit systems and designing pedestrian-friendly zones are crucial steps in reducing <span class="vocab" data-word="municipal">municipal</span> carbon footprints.</p>
+
+            <p>However, technological advancements alone are insufficient without a shift in human consciousness. This is where environmental education plays a pivotal role. By integrating climate science into school <span class="vocab" data-word="curriculums">curriculums</span>, societies can <span class="vocab" data-word="empower">empower</span> the younger generation. Education fosters <span class="vocab" data-word="awareness">awareness</span> of how daily choices impact the planet. Innovative <span class="vocab" data-word="pedagogy">pedagogy</span> encourages students to engage in local projects, transforming abstract concepts into tangible action. Instilling a sense of environmental <span class="vocab" data-word="stewardship">stewardship</span> from a young age ensures that future leaders prioritize the health of the planet.</p>
+
+            <p>At the macro level, decisive government <span class="vocab" data-word="legislation">legislation</span> and international cooperation are indispensable. International agreements, such as the Paris Agreement, represent monumental achievements, setting binding targets for nations to reduce greenhouse gases. Governments are utilizing economic instruments to force compliance. Carbon pricing mechanisms penalize heavy polluters financially. Conversely, governments provide a <span class="vocab" data-word="subsidy">subsidy</span> to clean energy companies to accelerate growth. While international <span class="vocab" data-word="protocols">protocols</span> are difficult to enforce, the establishment of strict standards is forcing industries to adapt.</p>
+
+            <p>In the corporate sphere, there is a growing demand for <span class="vocab" data-word="accountability">accountability</span> and <span class="vocab" data-word="transparency">transparency</span>. Consumers are pressuring corporations to adopt ESG criteria. Companies are scrutinized for the sustainability of their supply chains. However, this has led to 'greenwashing'—a deceptive practice where a <span class="vocab" data-word="corporate">corporate</span> entity exaggerates its environmental initiatives. To combat this, independent auditing is becoming necessary to ensure claims are backed by verifiable data.</p>
+
+            <p>Ultimately, the power to drive systemic change rests with the individual. <span class="vocab" data-word="grassroots">Grassroots</span> movements have proven effective in raising public awareness. Furthermore, everyday choices shape market demand. Ethical <span class="vocab" data-word="consumerism">consumerism</span> involves purchasing sustainably sourced goods. Making <span class="vocab" data-word="dietary">dietary</span> shifts, such as reducing meat consumption, can significantly lower an individual's carbon <span class="vocab" data-word="footprint">footprint</span>. When millions make minor lifestyle adjustments, the cumulative benefit is staggering.</p>
+
+            <p>In conclusion, securing environmental sustainability requires a <span class="vocab" data-word="synthesis">synthesis</span> of top-down policy and bottom-up individual action. It touches every aspect of human civilization. The transition is undeniably complex, yet the cost of inaction is exponentially higher. Embracing this global challenge is the defining task of our era.</p>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Questions Section -->
+    <div class="questions-column" id="questions-area">
+        
+        <!-- SECTION 1: Multiple Choice -->
+        <h2 class="section-title">Section 1: Multiple Choice</h2>
+        <div class="section-instructions">Questions 1-20. Choose the correct letter, A, B, C, or D.</div>
+        <div id="section-1-container"></div>
+
+        <!-- SECTION 2: True / False / Not Given -->
+        <h2 class="section-title">Section 2: True / False / Not Given</h2>
+        <div class="section-instructions">Questions 21-30. Do the following statements agree with the information given?</div>
+        <div id="section-2-container"></div>
+
+        <!-- SECTION 3: Gap Fill -->
+        <h2 class="section-title">Section 3: Gap Fill</h2>
+        <div class="section-instructions">Questions 31-40. Complete the sentences. Choose NO MORE THAN TWO WORDS from the passage.</div>
+        <div id="section-3-container"></div>
+
+        <!-- SECTION 4: Matching -->
+        <h2 class="section-title">Section 4: Matching</h2>
+        <div class="section-instructions">Questions 41-45. Match the concepts with their correct descriptions.</div>
+        <div id="section-4-container"></div>
+
+        <!-- SECTION 5: Short Essay -->
+        <h2 class="section-title">Section 5: Short Essay</h2>
+        <div class="section-instructions">Questions 46-50. Write a short response (3-5 sentences). <em>Teacher Review Required.</em></div>
+        <div id="section-5-container"></div>
+
+        <!-- Controls & Results -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="action-btn secondary" id="btn-explanations" onclick="toggleExplanations()" style="display:none;">Explanations</button>
+            <button class="action-btn secondary danger" onclick="resetTest()">Reset</button>
+        </div>
+
+        <div id="results-container">
+            <h2>Your Results</h2>
+            <div class="score-display" id="score-text">0 / 45</div>
+            <p style="font-size:1.2rem; font-weight:bold; color:var(--text-dark);">Percentage: <span id="percentage-text">0</span>%</p>
+            <div class="band-estimation" id="band-text">Estimated Band: 0.0</div>
+            <p style="margin-top: 10px; font-size: 0.9em; color: var(--text-gray);">*Note: Section 5 (Essays) is not automatically graded.</p>
+        </div>
+
+        <div id="explanations-container">
+            <h2 style="color: var(--primary-blue); border-bottom: 3px solid; padding-bottom: 10px; margin-bottom: 20px;">Detailed Explanations</h2>
+            <div id="exp-list"></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Vocab Modal Structure -->
+<div class="modal-overlay" id="vocabModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeVocabModal()">&times;</span>
+        <div class="modal-word" id="m-word">Word</div>
+        <div class="modal-ipa" id="m-ipa">/ipa/</div>
+        <div class="modal-pos" id="m-pos">noun</div>
+        <div class="modal-meanings">
+            <div class="modal-en" id="m-en">English meaning</div>
+            <div class="modal-vi" id="m-vi">Vietnamese meaning</div>
+        </div>
+        <div class="modal-ex" id="m-ex">"Example sentence goes here."</div>
+    </div>
+</div>
+
+<script>
+    /* JS Initialization and Vocab Data */
+    const vocabData = {
+        "anthropogenic": { ipa: "/ˌæn.θrə.pəˈdʒen.ɪk/", pos: "adj.", en: "Caused by human activity.", vi: "Gây ra bởi con người.", ex: "Anthropogenic climate change is a major concern for scientists." },
+        "paradigm": { ipa: "/ˈpær.ə.daɪm/", pos: "noun", en: "A typical example or pattern of something; a model.", vi: "Mô hình, hệ chuẩn.", ex: "The discovery of DNA created a new paradigm in biology." },
+        "sustainability": { ipa: "/səˌsteɪ.nəˈbɪl.ə.ti/", pos: "noun", en: "The ability to be maintained at a certain rate or level without depleting natural resources.", vi: "Sự bền vững.", ex: "The company's commitment to environmental sustainability is commendable." },
+        "imperative": { ipa: "/ɪmˈper.ə.tɪv/", pos: "noun/adj.", en: "Of vital importance; crucial.", vi: "Sự bắt buộc, điều cấp bách.", ex: "It is an absolute imperative that we reduce emissions." },
+        "multidimensional": { ipa: "/ˌmʌl.ti.daɪˈmen.ʃən.əl/", pos: "adj.", en: "Having many different aspects.", vi: "Đa chiều.", ex: "A multidimensional challenge." },
+        "mitigation": { ipa: "/ˌmɪt.ɪˈɡeɪ.ʃən/", pos: "noun", en: "The action of reducing the severity, seriousness, or painfulness of something.", vi: "Sự giảm nhẹ, làm dịu.", ex: "Climate change mitigation requires global cooperation." },
+        "ecosystems": { ipa: "/ˈiː.kəʊˌsɪs.təmz/", pos: "noun", en: "Biological communities of interacting organisms and their physical environment.", vi: "Hệ sinh thái.", ex: "Marine ecosystems are threatened by plastic pollution." },
+        "transition": { ipa: "/trænˈzɪʃ.ən/", pos: "noun", en: "The process or a period of changing from one state or condition to another.", vi: "Sự chuyển tiếp, chuyển đổi.", ex: "The transition to renewable energy is inevitable." },
+        "renewable": { ipa: "/rɪˈnjuː.ə.bəl/", pos: "adj.", en: "Capable of being renewed or replenished naturally.", vi: "Có thể tái tạo.", ex: "Wind and solar are popular renewable energy sources." },
+        "viable": { ipa: "/ˈvaɪ.ə.bəl/", pos: "adj.", en: "Capable of working successfully; feasible.", vi: "Có thể thực hiện được, khả thi.", ex: "We need to find a viable alternative to plastic." },
+        "intermittency": { ipa: "/ˌɪn.təˈmɪt.ən.si/", pos: "noun", en: "The state of occurring at irregular intervals; not continuous.", vi: "Sự gián đoạn, tính không liên tục.", ex: "The intermittency of solar power is a challenge for the grid." },
+        "infrastructure": { ipa: "/ˈɪn.frəˌstrʌk.tʃər/", pos: "noun", en: "The basic physical and organizational structures needed for the operation of a society.", vi: "Cơ sở hạ tầng.", ex: "The city needs to upgrade its infrastructure to support electric vehicles." },
+        "deployment": { ipa: "/dɪˈplɔɪ.mənt/", pos: "noun", en: "The action of bringing resources into effective action.", vi: "Sự triển khai.", ex: "The rapid deployment of renewables will cut emissions." },
+        "emissions": { ipa: "/ɪˈmɪʃ.ənz/", pos: "noun", en: "Plural form of emission.", vi: "Các sự phát thải.", ex: "We need to reduce carbon emissions." },
+        "unprecedented": { ipa: "/ʌnˈpres.ɪ.den.tɪd/", pos: "adj.", en: "Never done or known before.", vi: "Chưa từng có.", ex: "The speed of global warming is unprecedented in Earth's history." },
+        "integration": { ipa: "/ˌɪn.tɪˈɡreɪ.ʃən/", pos: "noun", en: "The action or process of combining two or more things in an effective way.", vi: "Sự tích hợp.", ex: "The integration of AI into farming can increase yields." },
+        "optimization": { ipa: "/ˌɒp.tɪ.maɪˈzeɪ.ʃən/", pos: "noun", en: "The action of making the best or most effective use of a situation or resource.", vi: "Sự tối ưu hóa.", ex: "Search engine optimization helps websites rank higher." },
+        "metropolitan": { ipa: "/ˌmet.rəˈpɒl.ɪ.tən/", pos: "adj.", en: "Relating to a metropolis.", vi: "Thuộc vùng đô thị.", ex: "The metropolitan area has a large population." },
+        "feasibility": { ipa: "/ˌfiː.zəˈbɪl.ə.ti/", pos: "noun", en: "The state or degree of being easily or conveniently done.", vi: "Tính khả thi.", ex: "A feasibility study must be conducted before building the dam." },
+        "synthetic": { ipa: "/sɪnˈθet.ɪk/", pos: "adj.", en: "Made by chemical synthesis, especially to imitate a natural product.", vi: "Tổng hợp, nhân tạo.", ex: "Synthetic materials take a long time to decompose." },
+        "microplastics": { ipa: "/ˈmaɪ.krəʊˌplæs.tɪks/", pos: "noun", en: "Extremely small pieces of plastic debris.", vi: "Vi nhựa.", ex: "Microplastics have been found in the stomachs of marine life." },
+        "ubiquitous": { ipa: "/juːˈbɪk.wɪ.təs/", pos: "adj.", en: "Present, appearing, or found everywhere.", vi: "Có mặt ở khắp nơi.", ex: "Mobile phones have become ubiquitous in modern society." },
+        "biodegradable": { ipa: "/ˌbaɪ.əʊ.dɪˈɡreɪ.də.bəl/", pos: "adj.", en: "Capable of being decomposed by bacteria.", vi: "Có thể phân hủy sinh học.", ex: "Use biodegradable packaging to reduce waste." },
+        "circular": { ipa: "/ˈsɜː.kjə.lər/", pos: "adj.", en: "Relating to an economic system aimed at eliminating waste.", vi: "Tuần hoàn.", ex: "A circular economy minimizes waste by reusing materials." },
+        "accumulation": { ipa: "/əˌkjuː.mjəˈleɪ.ʃən/", pos: "noun", en: "The acquisition or gradual gathering of something.", vi: "Sự tích lũy.", ex: "The accumulation of greenhouse gases warms the planet." },
+        "biodiversity": { ipa: "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/", pos: "noun", en: "The variety of plant and animal life.", vi: "Đa dạng sinh học.", ex: "Tropical rainforests have high biodiversity." },
+        "extinction": { ipa: "/ɪkˈstɪŋk.ʃən/", pos: "noun", en: "The fact or process of a species becoming extinct.", vi: "Sự tuyệt chủng.", ex: "Many species are currently facing extinction." },
+        "habitat": { ipa: "/ˈhæb.ɪ.tæt/", pos: "noun", en: "The natural home or environment of an animal.", vi: "Môi trường sống.", ex: "The panda's natural habitat is bamboo forests." },
+        "conservation": { ipa: "/ˌkɒn.səˈveɪ.ʃən/", pos: "noun", en: "Prevention of wasteful use of a resource; preservation of nature.", vi: "Sự bảo tồn.", ex: "Wildlife conservation is essential." },
+        "ecological": { ipa: "/ˌiː.kəˈlɒdʒ.ɪ.kəl/", pos: "adj.", en: "Relating to the relation of living organisms to one another.", vi: "Thuộc về sinh thái.", ex: "Pollution has caused an ecological disaster." },
+        "urbanization": { ipa: "/ˌɜː.bən.aɪˈzeɪ.ʃən/", pos: "noun", en: "The process of making an area more urban.", vi: "Sự đô thị hóa.", ex: "Rapid urbanization has led to housing shortages." },
+        "resilient": { ipa: "/rɪˈzɪl.i.ənt/", pos: "adj.", en: "Able to withstand or recover quickly.", vi: "Kiên cường, phục hồi nhanh.", ex: "Cities need to build resilient infrastructure." },
+        "implementation": { ipa: "/ˌɪm.plɪ.menˈteɪ.ʃən/", pos: "noun", en: "The process of putting a decision or plan into effect.", vi: "Sự thực thi.", ex: "The implementation of the new law will take time." },
+        "municipal": { ipa: "/mjuːˈnɪs.ɪ.pəl/", pos: "adj.", en: "Relating to a town or city or its local government.", vi: "Thuộc thành phố, đô thị.", ex: "The municipal government handles waste." },
+        "curriculums": { ipa: "/kəˈrɪk.jə.ləmz/", pos: "noun", en: "Plural of curriculum.", vi: "Các chương trình giảng dạy.", ex: "Schools are updating their curriculums." },
+        "empower": { ipa: "/ɪmˈpaʊər/", pos: "verb", en: "Give power or authority to.", vi: "Trao quyền.", ex: "Education empowers students." },
+        "awareness": { ipa: "/əˈweə.nəs/", pos: "noun", en: "Knowledge or perception of a situation.", vi: "Sự nhận thức.", ex: "Raise public awareness about pollution." },
+        "pedagogy": { ipa: "/ˈped.ə.ɡɒdʒ.i/", pos: "noun", en: "The method and practice of teaching.", vi: "Phương pháp giảng dạy.", ex: "Her pedagogy involves interactive games." },
+        "stewardship": { ipa: "/ˈstjuː.əd.ʃɪp/", pos: "noun", en: "The job of taking care of something.", vi: "Sự quản lý, chăm sóc.", ex: "Environmental stewardship is important." },
+        "legislation": { ipa: "/ˌledʒ.ɪˈsleɪ.ʃən/", pos: "noun", en: "Laws, considered collectively.", vi: "Pháp luật, lập pháp.", ex: "New legislation restricts pesticides." },
+        "subsidy": { ipa: "/ˈsʌb.sɪ.di/", pos: "noun", en: "A sum of money granted by the government.", vi: "Tiền trợ cấp.", ex: "The government offers a solar subsidy." },
+        "protocols": { ipa: "/ˈprəʊ.tə.kɒlz/", pos: "noun", en: "Plural of protocol.", vi: "Các hiệp định.", ex: "International protocols are hard to enforce." },
+        "accountability": { ipa: "/əˌkaʊn.təˈbɪl.ə.ti/", pos: "noun", en: "The fact of being accountable.", vi: "Trách nhiệm giải trình.", ex: "There must be corporate accountability." },
+        "transparency": { ipa: "/trænˈspær.ən.si/", pos: "noun", en: "The condition of operating openly.", vi: "Sự minh bạch.", ex: "Demand transparency in supply chains." },
+        "corporate": { ipa: "/ˈkɔː.pər.ət/", pos: "adj.", en: "Relating to a large company.", vi: "Thuộc đoàn thể, công ty.", ex: "Corporate responsibility is essential." },
+        "grassroots": { ipa: "/ˈɡrɑːs.ruːts/", pos: "noun/adj.", en: "The most basic level of an organization.", vi: "Cấp cơ sở.", ex: "A grassroots movement." },
+        "consumerism": { ipa: "/kənˈsjuː.mə.rɪ.zəm/", pos: "noun", en: "Preoccupation with buying goods.", vi: "Chủ nghĩa tiêu dùng.", ex: "Mindless consumerism contributes to waste." },
+        "dietary": { ipa: "/ˈdaɪ.ə.tər.i/", pos: "adj.", en: "Relating to diet.", vi: "Thuộc chế độ ăn uống.", ex: "Dietary shifts can help the planet." },
+        "footprint": { ipa: "/ˈfʊt.prɪnt/", pos: "noun", en: "Impact on the environment.", vi: "Dấu chân (tác động).", ex: "Reduce your carbon footprint." },
+        "synthesis": { ipa: "/ˈsɪn.θə.sɪs/", pos: "noun", en: "Combination of ideas.", vi: "Sự tổng hợp.", ex: "A synthesis of policy and action." }
+    };
+
+    /* Question Data Generation */
+    const questions = [
+        // SECTION 1: MCQ (1-20)
+        { q: "1. What is primarily responsible for the acceleration of the greenhouse effect?", options: ["A. Meteorological anomalies", "B. Global temperature rise", "C. Anthropogenic activities like fossil fuel combustion", "D. The disruption of ecosystems"], ans: "C", expEn: "The text states 'anthropogenic activities... have drastically accelerated the greenhouse effect'.", expVi: "Đoạn văn nêu 'hoạt động của con người... đã làm tăng tốc hiệu ứng nhà kính'." },
+        { q: "2. The 'paradigm shift toward sustainability' is described as:", options: ["A. A technological impossibility", "B. Merely an option", "C. Driven solely by individual behavior", "D. An absolute imperative"], ans: "D", expEn: "It has become 'not merely an option, but an absolute imperative.'", expVi: "Nó là 'một yêu cầu bắt buộc (imperative)'." },
+        { q: "3. What is the main challenge of solar and wind power?", options: ["A. High production costs", "B. Lack of efficiency", "C. Their intermittency", "D. Environmental cost"], ans: "C", expEn: "'Yet, the intermittency of these energy sources remains a significant hurdle'.", expVi: "Tính gián đoạn (intermittency) là trở ngại lớn." },
+        { q: "4. How can the intermittency of renewable energy be overcome?", options: ["A. Building coal plants", "B. Battery storage and grid modernization", "C. Stopping wind production", "D. Lowering production costs directly"], ans: "B", expEn: "'requires massive investments in advanced battery storage... and modernization of grid infrastructure.'", expVi: "Cần đầu tư pin lưu trữ và hiện đại hóa lưới điện." },
+        { q: "5. What is the primary function of Carbon Capture and Storage (CCS)?", options: ["A. Extract carbon from the ocean", "B. Extract carbon directly from industrial sources", "C. Replace artificial intelligence", "D. Increase emissions"], ans: "B", expEn: "CCS aims to 'extract carbon dioxide directly from industrial emission sources'.", expVi: "CCS trích xuất CO2 trực tiếp từ nguồn phát thải công nghiệp." },
+        { q: "6. How is Artificial Intelligence helping metropolitan areas?", options: ["A. Sequestering carbon underground", "B. Replacing human engineers", "C. Autonomously adjusting weather", "D. Optimizing power consumption in smart buildings"], ans: "D", expEn: "AI allows for 'optimization of power consumption... Smart buildings can now autonomously adjust heating...'", expVi: "AI tối ưu hóa tiêu thụ điện năng." },
+        { q: "7. Why are plastics considered a formidable challenge?", options: ["A. Too expensive", "B. Notoriously durable and resistant to degradation", "C. Not synthetic", "D. Break down too quickly"], ans: "B", expEn: "Plastics are 'notoriously durable and resistant to natural degradation'.", expVi: "Nhựa cực kỳ bền và khó phân hủy." },
+        { q: "8. What are 'microplastics'?", options: ["A. Tiny marine creatures", "B. Biodegradable alternatives", "C. Tiny particles of broken-down plastic waste", "D. Single-use plastics"], ans: "C", expEn: "Microplastics are 'tiny particles' that plastic waste breaks down into.", expVi: "Vi nhựa là các hạt nhỏ do rác nhựa phân hủy." },
+        { q: "9. Which economic model minimizes waste by keeping materials in use?", options: ["A. Linear model", "B. Take-make-dispose", "C. Single-use model", "D. Circular economy"], ans: "D", expEn: "'a circular economy... designed to minimize waste'.", expVi: "Kinh tế tuần hoàn (circular economy)." },
+        { q: "10. What is causing the 'sixth mass extinction'?", options: ["A. Protected reserves", "B. Restoration", "C. Habitat destruction for agriculture and expansion", "D. Interacting species"], ans: "C", expEn: "Driven primarily by 'habitat destruction for agriculture and urban expansion.'", expVi: "Do phá hủy môi trường sống." },
+        { q: "11. The Amazon rainforest is often referred to as:", options: ["A. The lungs of the Earth", "B. A degraded environment", "C. A marine reserve", "D. An urban heat island"], ans: "A", expEn: "'The preservation of the Amazon rainforest, often referred to as the lungs of the Earth...'", expVi: "Rừng Amazon là 'lá phổi của Trái Đất'." },
+        { q: "12. What percentage of the global population will reside in cities by 2050?", options: ["A. Nearly 50%", "B. Nearly 70%", "C. Nearly 80%", "D. Nearly 90%"], ans: "B", expEn: "'nearly 70% of the global population will reside in cities.'", expVi: "Gần 70% dân số sẽ sống ở thành phố." },
+        { q: "13. What contributes to the 'urban heat island' effect?", options: ["A. Vertical gardens", "B. Urban parks", "C. Resilient infrastructure", "D. Traditional city planning prioritizing vehicular traffic"], ans: "D", expEn: "Traditional planning prioritizing vehicular traffic leads to 'the urban heat island effect'.", expVi: "Quy hoạch ưu tiên xe cộ gây hiệu ứng đảo nhiệt." },
+        { q: "14. How can schools help foster environmental stewardship?", options: ["A. Removing science", "B. Integrating climate science into curriculums", "C. Isolating students", "D. Ignoring abstract concepts"], ans: "B", expEn: "Schools can empower youth 'By integrating climate science... into school curriculums'.", expVi: "Bằng cách tích hợp khoa học khí hậu vào chương trình." },
+        { q: "15. The Paris Agreement is an example of:", options: ["A. A national tax policy", "B. A corporate strategy", "C. An international agreement setting binding targets", "D. A grassroots movement"], ans: "C", expEn: "An international agreement 'setting binding targets for nations to reduce greenhouse gases.'", expVi: "Hiệp định quốc tế đặt mục tiêu ràng buộc." },
+        { q: "16. Carbon pricing mechanisms are designed to:", options: ["A. Subsidize polluters", "B. Penalize heavy polluters financially", "C. Accelerate fossil fuels", "D. Encourage plastics"], ans: "B", expEn: "Carbon pricing mechanisms 'penalize heavy polluters financially.'", expVi: "Phạt tài chính đối với những người gây ô nhiễm." },
+        { q: "17. What does ESG stand for?", options: ["A. Energy, Solar, Gas", "B. Environmental, Social, and Governance", "C. Ecological, Structural, Governmental", "D. Economic, Systematic, Green"], ans: "B", expEn: "The text mentions 'Environmental, Social, and Governance (ESG) criteria'.", expVi: "Environmental, Social, and Governance." },
+        { q: "18. What is 'greenwashing'?", options: ["A. Independent auditing", "B. Sustainable chains", "C. A deceptive practice exaggerating environmental initiatives", "D. Cleaning buildings"], ans: "C", expEn: "'a deceptive practice where a corporate entity exaggerates its environmental initiatives'.", expVi: "Hành vi lừa dối phóng đại nỗ lực môi trường." },
+        { q: "19. Which individual action significantly lowers a carbon footprint?", options: ["A. Industrial agriculture", "B. Reducing meat consumption", "C. Buying single-use plastics", "D. Avoiding grassroots movements"], ans: "B", expEn: "'reducing meat consumption... can significantly lower an individual's carbon footprint'.", expVi: "Giảm tiêu thụ thịt." },
+        { q: "20. Securing environmental sustainability requires:", options: ["A. Only top-down policy", "B. Only bottom-up action", "C. A synthesis of top-down policy and bottom-up individual action", "D. Ignoring challenges"], ans: "C", expEn: "It 'requires a synthesis of top-down policy and bottom-up individual action.'", expVi: "Sự tổng hợp chính sách và hành động cá nhân." },
+        
+        // SECTION 2: TRUE / FALSE / NOT GIVEN (21-30)
+        { q: "21. Deforestation is considered an anthropogenic activity.", ans: "TRUE", expEn: "The text groups 'combustion of fossil fuels and extensive deforestation' under anthropogenic activities.", expVi: "Phá rừng là hoạt động do con người." },
+        { q: "22. Solar and wind power production costs have increased recently.", ans: "FALSE", expEn: "They are driven by 'plummeting production costs' (costs are falling).", expVi: "Chi phí đang giảm mạnh (plummeting)." },
+        { q: "23. Smart buildings use AI to reduce water waste.", ans: "NOT GIVEN", expEn: "The text mentions AI adjusting heating, cooling, and lighting, not water.", expVi: "Không nhắc đến lãng phí nước." },
+        { q: "24. Marine life ingests microplastics.", ans: "TRUE", expEn: "Microplastics are 'ingested by marine life'.", expVi: "Vi nhựa bị sinh vật biển ăn phải." },
+        { q: "25. Most ecological restoration projects are funded by corporations.", ans: "NOT GIVEN", expEn: "The text does not specify who funds them.", expVi: "Không có thông tin về nhà tài trợ." },
+        { q: "26. Urban heat islands cause cities to have higher temperatures.", ans: "TRUE", expEn: "Traditional planning leads to the 'urban heat island' effect (higher temperatures).", expVi: "Đảo nhiệt làm thành phố nóng hơn." },
+        { q: "27. The Paris Agreement enforces a single global carbon tax.", ans: "NOT GIVEN", expEn: "It sets binding targets, but a single global tax is not mentioned.", expVi: "Không bắt buộc một loại thuế chung." },
+        { q: "28. Independent auditing combats greenwashing.", ans: "TRUE", expEn: "'independent auditing is becoming necessary' to combat it.", expVi: "Kiểm toán độc lập giúp chống greenwashing." },
+        { q: "29. Industrial agriculture has low greenhouse gas emissions.", ans: "FALSE", expEn: "The text mentions 'massive greenhouse gas emissions associated with industrial agriculture.'", expVi: "Nông nghiệp công nghiệp phát thải lớn." },
+        { q: "30. Ethical consumerism involves buying sustainably sourced goods.", ans: "TRUE", expEn: "'Ethical consumerism involves purchasing sustainably sourced goods.'", expVi: "Đúng với định nghĩa trong bài." },
+
+        // SECTION 3: GAP FILL (31-40)
+        { q: "31. The rise in temperatures has led to severe <input type='text' name='q31'>.", ans: ["meteorological anomalies"], expEn: "From Par. 1: 'led to severe meteorological anomalies'.", expVi: "Đáp án: meteorological anomalies." },
+        { q: "32. The <input type='text' name='q32'> of solar and wind power is a hurdle.", ans: ["intermittency"], expEn: "From Par. 2: 'the intermittency of these energy sources remains a significant hurdle'.", expVi: "Đáp án: intermittency." },
+        { q: "33. CCS technology extracts <input type='text' name='q33'> from industrial sources.", ans: ["carbon dioxide"], expEn: "From Par. 3: 'extract carbon dioxide directly'.", expVi: "Đáp án: carbon dioxide." },
+        { q: "34. Efforts focus on moving towards <input type='text' name='q34'> materials.", ans: ["biodegradable"], expEn: "From Par. 4: 'towards biodegradable materials.'", expVi: "Đáp án: biodegradable." },
+        { q: "35. Scientists term the current loss of species the sixth <input type='text' name='q35'>.", ans: ["mass extinction"], expEn: "From Par. 5: 'scientists term the sixth mass extinction'.", expVi: "Đáp án: mass extinction." },
+        { q: "36. By 2050, nearly 70% of people will reside in <input type='text' name='q36'>.", ans: ["cities"], expEn: "From Par. 6: 'nearly 70%... will reside in cities.'", expVi: "Đáp án: cities." },
+        { q: "37. Innovative <input type='text' name='q37'> turns concepts into action for students.", ans: ["pedagogy"], expEn: "From Par. 7: 'Innovative pedagogy encourages students...'", expVi: "Đáp án: pedagogy." },
+        { q: "38. Cap-and-trade systems are a type of <input type='text' name='q38'> mechanism.", ans: ["carbon pricing"], expEn: "From Par. 8: 'Carbon pricing mechanisms... such as cap-and-trade'.", expVi: "Đáp án: carbon pricing." },
+        { q: "39. Deceptive exaggeration of environmental efforts is called <input type='text' name='q39'>.", ans: ["greenwashing"], expEn: "From Par. 9: 'a deceptive practice... led to greenwashing'.", expVi: "Đáp án: greenwashing." },
+        { q: "40. Buying sustainably sourced goods is ethical <input type='text' name='q40'>.", ans: ["consumerism"], expEn: "From Par. 10: 'Ethical consumerism involves purchasing...'", expVi: "Đáp án: consumerism." },
+        
+        // SECTION 4: MATCHING (41-45)
+        { 
+            q: "41. Circular Economy", 
+            options: ["A. Minimizes waste by keeping materials in use", "B. Uses AI to adjust heating", "C. Government money for clean energy", "D. Misleading environmental marketing", "E. Higher city temperatures"], 
+            ans: "A", expEn: "Par. 4 links Circular Economy to minimizing waste.", expVi: "Kinh tế tuần hoàn giảm thiểu rác thải." 
+        },
+        { 
+            q: "42. Urban Heat Island", 
+            options: ["A. Minimizes waste by keeping materials in use", "B. Uses AI to adjust heating", "C. Government money for clean energy", "D. Misleading environmental marketing", "E. Higher city temperatures"], 
+            ans: "E", expEn: "Par. 6 links it to higher city temperatures.", expVi: "Đảo nhiệt làm thành phố nóng hơn." 
+        },
+        { 
+            q: "43. Subsidy", 
+            options: ["A. Minimizes waste by keeping materials in use", "B. Uses AI to adjust heating", "C. Government money for clean energy", "D. Misleading environmental marketing", "E. Higher city temperatures"], 
+            ans: "C", expEn: "Par. 8 states governments provide a subsidy to clean energy.", expVi: "Trợ cấp (subsidy) là hỗ trợ tài chính." 
+        },
+        { 
+            q: "44. Greenwashing", 
+            options: ["A. Minimizes waste by keeping materials in use", "B. Uses AI to adjust heating", "C. Government money for clean energy", "D. Misleading environmental marketing", "E. Higher city temperatures"], 
+            ans: "D", expEn: "Par. 9 defines greenwashing as deceptive marketing.", expVi: "Tẩy xanh (Greenwashing) là tiếp thị lừa dối." 
+        },
+        { 
+            q: "45. Smart Buildings", 
+            options: ["A. Minimizes waste by keeping materials in use", "B. Uses AI to adjust heating", "C. Government money for clean energy", "D. Misleading environmental marketing", "E. Higher city temperatures"], 
+            ans: "B", expEn: "Par. 3 mentions smart buildings use AI.", expVi: "Tòa nhà thông minh dùng AI." 
+        }
+    ];
+
+    /* App Logic */
+    document.addEventListener("DOMContentLoaded", () => {
+        // Find ALL span class vocab and add event listeners. 
+        const vocabSpans = document.querySelectorAll('.vocab');
+        vocabSpans.forEach(span => {
+            span.addEventListener('click', function() {
+                const wordKey = this.getAttribute('data-word').toLowerCase();
+                showVocab(wordKey);
+            });
+        });
+
+        renderQuestions();
+    });
+
+    function showVocab(wordKey) {
+        const data = vocabData[wordKey];
+        if(data) {
+            document.getElementById('m-word').innerText = wordKey;
+            document.getElementById('m-ipa').innerText = data.ipa;
+            document.getElementById('m-pos').innerText = data.pos;
+            document.getElementById('m-en').innerText = "EN: " + data.en;
+            document.getElementById('m-vi').innerText = "VI: " + data.vi;
+            document.getElementById('m-ex').innerText = `"${data.ex}"`;
+            document.getElementById('vocabModal').style.display = 'flex';
+        }
+    }
+
+    function closeVocabModal() {
+        document.getElementById('vocabModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('vocabModal');
+        if (event.target == modal) closeVocabModal();
+    }
+
+    function renderQuestions() {
+        const sec1 = document.getElementById('section-1-container');
+        const sec2 = document.getElementById('section-2-container');
+        const sec3 = document.getElementById('section-3-container');
+        const sec4 = document.getElementById('section-4-container');
+        const sec5 = document.getElementById('section-5-container');
+
+        let html1 = '', html2 = '', html3 = '', html4 = '', html5 = '';
+
+        // MCQ
+        for(let i = 0; i < 20; i++) {
+            let q = questions[i];
+            let optionsHtml = '';
+            q.options.forEach(opt => {
+                let val = opt.charAt(0);
+                optionsHtml += `<li><label class="radio-label"><input type="radio" name="q${i+1}" value="${val}"> <span>${opt}</span></label></li>`;
+            });
+            html1 += `<div class="question-block"><div class="question-text">${q.q}</div><ul class="options-list">${optionsHtml}</ul></div>`;
+        }
+        sec1.innerHTML = html1;
+
+        // TFNG
+        for(let i = 20; i < 30; i++) {
+            let q = questions[i];
+            html2 += `<div class="question-block"><div class="question-text">${q.q}</div>
+                <div class="tfng-options">
+                    <label class="radio-label"><input type="radio" name="q${i+1}" value="TRUE"> TRUE</label>
+                    <label class="radio-label"><input type="radio" name="q${i+1}" value="FALSE"> FALSE</label>
+                    <label class="radio-label"><input type="radio" name="q${i+1}" value="NOT GIVEN"> NOT GIVEN</label>
+                </div>
+            </div>`;
+        }
+        sec2.innerHTML = html2;
+
+        // GAP FILL
+        for(let i = 30; i < 40; i++) {
+            let q = questions[i];
+            html3 += `<div class="question-block" style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+                <span style="font-weight:900; font-size:1.1rem; color:var(--text-dark);">${i+1}.</span> <div style="font-size:1.1rem;">${q.q.replace(/<input.*?>/, `<input type="text" id="q${i+1}" name="q${i+1}" autocomplete="off">`)}</div>
+            </div>`;
+        }
+        sec3.innerHTML = html3;
+
+        // MATCHING
+        for(let i = 40; i < 45; i++) {
+            let q = questions[i];
+            let selectHtml = `<select id="q${i+1}" name="q${i+1}"><option value="">-- Choose Definition --</option>`;
+            q.options.forEach(opt => {
+                let val = opt.charAt(0);
+                selectHtml += `<option value="${val}">${opt}</option>`;
+            });
+            selectHtml += `</select>`;
+            html4 += `<div class="question-block matching-container">
+                <div class="matching-label">${q.q}</div>
+                <div>${selectHtml}</div>
+            </div>`;
+        }
+        sec4.innerHTML = html4;
+
+        // ESSAY
+        const essayPrompts = [
+            "46. Do you think the transition to renewable energy is happening fast enough?",
+            "47. What role should individuals play in reducing plastic pollution?",
+            "48. Discuss the importance of environmental education.",
+            "49. Are carbon taxes effective?",
+            "50. What is the single most urgent environmental issue?"
+        ];
+        essayPrompts.forEach((p, idx) => {
+            html5 += `<div class="question-block">
+                <div class="question-text">${p}</div>
+                <textarea placeholder="Write your thoughts here..."></textarea>
+            </div>`;
+        });
+        sec5.innerHTML = html5;
+    }
+
+    /* Timer & Grading Logic */
+    let timerInterval;
+    let timeRemaining = 3600;
+    let isTimerRunning = false;
+
+    function formatTime(seconds) {
+        let m = Math.floor(seconds / 60);
+        let s = seconds % 60;
+        return `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+    }
+
+    function startTimer() {
+        if(!isTimerRunning && timeRemaining > 0) {
+            isTimerRunning = true;
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('time-display').innerText = formatTime(timeRemaining);
+                if(timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    document.getElementById('time-display').style.color = 'red';
+                    alert("Time is up! Please check your answers.");
+                }
+            }, 1000);
+        }
+    }
+
+    function pauseTimer() {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+    }
+
+    function resetTimer() {
+        pauseTimer();
+        timeRemaining = 3600;
+        document.getElementById('time-display').innerText = "60:00";
+        document.getElementById('time-display').style.color = '#e53e3e';
+    }
+
+    function checkAnswers() {
+        let score = 0;
+        const total = 45;
+        let expHtml = '';
+
+        for(let i = 0; i < 45; i++) {
+            let qNum = i + 1;
+            let qData = questions[i];
+            let userAns = '';
+            let isCorrect = false;
+
+            if(qNum <= 30) {
+                let selected = document.querySelector(`input[name="q${qNum}"]:checked`);
+                if(selected) userAns = selected.value;
+                if(userAns === qData.ans) isCorrect = true;
+            } else if(qNum <= 40) {
+                let inputVal = document.getElementById(`q${qNum}`).value.trim().toLowerCase();
+                userAns = inputVal;
+                if(qData.ans.includes(inputVal) && inputVal !== '') isCorrect = true;
+            } else {
+                let selectVal = document.getElementById(`q${qNum}`).value;
+                userAns = selectVal;
+                if(userAns === qData.ans) isCorrect = true;
+            }
+
+            if(isCorrect) score++;
+
+            let displayAns = Array.isArray(qData.ans) ? qData.ans[0] : qData.ans;
+            let statusClass = isCorrect ? 'is-correct' : 'is-wrong';
+            let statusText = isCorrect ? '<span class="correct-status">✔ CORRECT</span>' : `<span class="wrong-status">✘ WRONG</span> (You answered: ${userAns || '<em>nothing</em>'})`;
+
+            expHtml += `
+                <div class="explanation-box ${statusClass}">
+                    <div style="font-size:1.1rem; margin-bottom:5px;"><strong>Question ${qNum}:</strong> ${statusText}</div>
+                    <div style="margin-bottom:8px;"><strong>Correct Answer:</strong> <span style="background:var(--vocab-highlight); padding:2px 8px; border-radius:4px; font-weight:bold; border:1px solid #d69e2e;">${displayAns}</span></div>
+                    <div class="eng-exp">${qData.expEn}</div>
+                    <div class="vie-exp">${qData.expVi}</div>
+                </div>
+            `;
+        }
+
+        let percentage = Math.round((score / total) * 100);
+        let band = calculateBand(score);
+        
+        document.getElementById('score-text').innerText = `${score} / ${total}`;
+        document.getElementById('percentage-text').innerText = percentage;
+        document.getElementById('band-text').innerText = `Estimated Band: ${band}`;
+        document.getElementById('results-container').style.display = 'block';
+        
+        document.getElementById('exp-list').innerHTML = expHtml;
+        document.getElementById('btn-explanations').style.display = 'inline-block';
+        
+        // Scroll Questions column to results
+        let qArea = document.getElementById('questions-area');
+        let results = document.getElementById('results-container');
+        qArea.scrollTo({top: results.offsetTop - 20, behavior: 'smooth'});
+    }
+
+    function calculateBand(score) {
+        if(score >= 43) return "9.0";
+        if(score >= 40) return "8.5";
+        if(score >= 37) return "8.0";
+        if(score >= 34) return "7.5";
+        if(score >= 31) return "7.0";
+        if(score >= 28) return "6.5";
+        if(score >= 25) return "6.0";
+        if(score >= 21) return "5.5";
+        if(score >= 17) return "5.0";
+        if(score >= 13) return "4.5";
+        if(score >= 10) return "4.0";
+        return "< 4.0";
+    }
+
+    function toggleExplanations() {
+        let expDiv = document.getElementById('explanations-container');
+        let btn = document.getElementById('btn-explanations');
+        if(expDiv.style.display === 'none' || expDiv.style.display === '') {
+            expDiv.style.display = 'block';
+            btn.innerText = "Hide Explanations";
+            document.getElementById('questions-area').scrollTo({top: expDiv.offsetTop - 20, behavior: 'smooth'});
+        } else {
+            expDiv.style.display = 'none';
+            btn.innerText = "Explanations";
+        }
+    }
+
+    function resetTest() {
+        if(confirm("Are you sure you want to reset the test?")) {
+            let radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => r.checked = false);
+            let texts = document.querySelectorAll('input[type="text"], textarea');
+            texts.forEach(t => t.value = '');
+            let selects = document.querySelectorAll('select');
+            selects.forEach(s => s.selectedIndex = 0);
+            
+            document.getElementById('results-container').style.display = 'none';
+            document.getElementById('explanations-container').style.display = 'none';
+            document.getElementById('btn-explanations').style.display = 'none';
+            
+            resetTimer();
+            document.getElementById('questions-area').scrollTo({top: 0, behavior: 'smooth'});
+        }
+    }
+</script>
+
+</body>
+</html>
