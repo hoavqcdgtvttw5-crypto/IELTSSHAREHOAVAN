@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Listening | Mr Hoa Van's Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fce7f3; /* pink-100 */
+            background-image: radial-gradient(#fbcfe8 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Neobrutalism style borders */
+        .neo-border {
+            border: 4px solid #111827;
+            box-shadow: 6px 6px 0px #111827;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .neo-border-sm {
+            border: 2px solid #111827;
+            box-shadow: 3px 3px 0px #111827;
+        }
+
+        .neo-button:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px #111827;
+        }
+
+        .neo-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #111827;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf2f8; 
+            border-left: 2px solid #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6; 
+            border: 2px solid #111827;
+            border-radius: 10px;
+        }
+
+        /* Blinking Animation for Timer */
+        @keyframes blink-red {
+            0%, 100% { background-color: #fca5a5; color: #7f1d1d; }
+            50% { background-color: #ef4444; color: white; }
+        }
+        .time-warning {
+            animation: blink-red 1s infinite;
+        }
+
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .correct-input { background-color: #bbf7d0 !important; border-color: #166534 !important; color: #166534 !important; }
+        .wrong-input { background-color: #fecaca !important; border-color: #991b1b !important; color: #991b1b !important; text-decoration: line-through; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-6 text-gray-900 flex flex-col">
+
+    <!-- Header -->
+    <header class="flex flex-wrap justify-between items-center mb-6 gap-4">
+        <div class="bg-white px-6 py-3 rounded-2xl neo-border flex items-center gap-3">
+            <span class="text-3xl">🎧</span>
+            <h1 class="text-2xl font-bold text-purple-600">IELTS Listening TEST - MR HOA VAN</h1>
+        </div>
+        
+        <div id="timerContainer" class="bg-yellow-300 px-6 py-3 rounded-2xl neo-border font-bold text-xl flex items-center gap-2">
+            ⏳ <span id="timeDisplay">40:00</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area (70/30 Layout Desktop, Stacked Mobile) -->
+    <main class="flex-grow flex flex-col md:flex-row gap-6 mb-8 relative">
+        
+        <!-- LEFT PANEL (70%) - Context, Audio, Note-taking -->
+        <div class="w-full md:w-[65%] lg:w-[70%] flex flex-col gap-6 md:sticky top-6 h-auto md:h-[calc(100vh-120px)]">
+            
+            <!-- Audio Player -->
+            <div class="bg-blue-200 p-6 rounded-3xl neo-border flex-shrink-0">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">▶️ Audio Bài Nghe</h2>
+                <audio controls class="w-full neo-border-sm rounded-full bg-white">
+                    <source src="https://pereletun.xyz/audio/audio_1138204850_1774344089366.mp3" type="audio/mpeg">
+                    Trình duyệt của bạn không hỗ trợ audio.
+                </audio>
+            </div>
+
+            <!-- Scratchpad (Giấy Nháp) -->
+            <div class="bg-white p-6 rounded-3xl neo-border flex-grow flex flex-col min-h-[300px]">
+                <h2 class="text-xl font-bold mb-2 text-pink-500">📝 Giấy Nháp (Scratchpad)</h2>
+                <p class="text-sm text-gray-500 mb-4">Ghi chú nhanh các keywords bạn nghe được vào đây nhé!</p>
+                <textarea class="w-full flex-grow p-4 bg-gray-50 rounded-xl neo-border-sm resize-none focus:outline-none focus:ring-4 focus:ring-pink-300" placeholder="Type your notes here..."></textarea>
+            </div>
+
+        </div>
+
+        <!-- RIGHT PANEL (30%) - Questions & Interactions -->
+        <div class="w-full md:w-[35%] lg:w-[30%] bg-white rounded-3xl neo-border flex flex-col h-[700px] md:h-[calc(100vh-120px)]">
+            
+            <div class="p-4 border-b-4 border-gray-900 bg-purple-100 rounded-t-3xl flex justify-between items-center shrink-0">
+                <h2 class="text-xl font-bold text-purple-800">📌 Câu Hỏi</h2>
+                <span class="text-sm font-bold bg-white px-2 py-1 rounded-lg neo-border-sm" id="scoreDisplay">0/40</span>
+            </div>
+
+            <!-- Scrollable Questions Area -->
+            <div class="flex-grow overflow-y-auto p-5 bg-gray-50 rounded-b-3xl" id="questionArea">
+                
+                <!-- Part 1 -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold bg-yellow-300 inline-block px-3 py-1 rounded-lg neo-border-sm mb-4">Part 1 (Q1-10)</h3>
+                    <p class="text-sm font-semibold mb-4 text-gray-600">Write ONE WORD AND/OR A NUMBER.</p>
+                    
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-2 text-purple-700">Working in a summer camp in the USA</p>
+                        <ul class="space-y-4 list-disc pl-5">
+                            <li>General counsellors - need experience of working with children as a 
+                                <input type="text" id="q1" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100">
+                                <div id="exp-q1" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Specialist counsellors could use skills in: sport, e.g. 
+                                <input type="text" id="q2" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100">
+                                <div id="exp-q2" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Job in summer camp lasts for 
+                                <input type="text" id="q3" class="neo-border-sm rounded px-2 py-1 w-20 focus:outline-none focus:bg-yellow-100"> weeks
+                                <div id="exp-q3" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Job starts in 
+                                <input type="text" id="q4" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100">
+                                <div id="exp-q4" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>First week of job is used for 
+                                <input type="text" id="q5" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100">
+                                <div id="exp-q5" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Officially, counsellors must be at least 
+                                <input type="text" id="q6" class="neo-border-sm rounded px-2 py-1 w-16 focus:outline-none focus:bg-yellow-100"> years old
+                                <div id="exp-q6" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Salary: <input type="text" id="q7" class="neo-border-sm rounded px-2 py-1 w-20 focus:outline-none focus:bg-yellow-100"> US $.
+                                <div id="exp-q7" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                        </ul>
+                        <p class="font-bold mt-4 mb-2 text-purple-700">Must pay for:</p>
+                        <ul class="space-y-4 list-disc pl-5">
+                            <li>own <input type="text" id="q8" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100"> (£138)
+                                <div id="exp-q8" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>a <input type="text" id="q9" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100"> check in UK (£36)
+                                <div id="exp-q9" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Can get a <input type="text" id="q10" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-yellow-100"> on travel in America
+                                <div id="exp-q10" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Part 2 -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold bg-pink-300 inline-block px-3 py-1 rounded-lg neo-border-sm mb-4">Part 2 (Q11-20)</h3>
+                    
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">Questions 11-12: Which <span class="bg-yellow-200 px-1">TWO</span> things did the speaker's personal make-over include?</p>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q11_12" value="A" class="mt-1 w-4 h-4"> A. review of her wardrobe
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q11_12" value="B" class="mt-1 w-4 h-4"> B. booklet on fashion
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q11_12" value="C" class="mt-1 w-4 h-4"> C. advice on hairstyling
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q11_12" value="D" class="mt-1 w-4 h-4"> D. day's shopping with a stylist
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q11_12" value="E" class="mt-1 w-4 h-4"> E. photos of her in new clothes
+                            </label>
+                        </div>
+                        <div id="exp-q11_12" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">Questions 13-14: Which <span class="bg-yellow-200 px-1">TWO</span> things did the speaker appreciate about the make-over service?</p>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q13_14" value="A" class="mt-1 w-4 h-4"> A. It saved her a lot of time.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q13_14" value="B" class="mt-1 w-4 h-4"> B. It saved her a lot of money.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q13_14" value="C" class="mt-1 w-4 h-4"> C. It made her more self-confident.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q13_14" value="D" class="mt-1 w-4 h-4"> D. It improved her image at work.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q13_14" value="E" class="mt-1 w-4 h-4"> E. It made her more adventurous.
+                            </label>
+                        </div>
+                        <div id="exp-q13_14" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">Questions 15-20: What information is given about the personal shopping services at each of the following stores?</p>
+                        <div class="bg-gray-100 p-3 rounded neo-border-sm mb-4 text-sm font-semibold">
+                            A. charges a fee <br>B. necessary to book in advance <br>C. time is limited <br>D. available in larger stores only <br>E. advice on furniture also available <br>F. now offers a service for men <br>G. free alteration service provided <br>H. showers available
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex justify-between items-center">15. Hallberry 
+                                <select id="q15" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-pink-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">16. Rivero 
+                                <select id="q16" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-pink-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">17. Justine's 
+                                <select id="q17" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-pink-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">18. Blank and White 
+                                <select id="q18" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-pink-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">19. Wave 
+                                <select id="q19" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-pink-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">20. Dizzy's 
+                                <select id="q20" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-pink-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option><option value="H">H</option></select>
+                            </li>
+                        </ul>
+                        <div id="exp-q15_20" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Part 3 -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold bg-blue-300 inline-block px-3 py-1 rounded-lg neo-border-sm mb-4">Part 3 (Q21-30)</h3>
+                    
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">21. Simon thinks the Global Communications major:</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q21" value="A" class="w-4 h-4"> A. will help him get work in other countries.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q21" value="B" class="w-4 h-4"> B. has easier courses than the Public Relations major.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q21" value="C" class="w-4 h-4"> C. could lead to a well-paid job in New Zealand.
+                            </label>
+                        </div>
+                        <div id="exp-q21" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">22. Simon says that the Economic Principles course was:</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q22" value="A" class="w-4 h-4"> A. too challenging for him.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q22" value="B" class="w-4 h-4"> B. uninteresting as a subject.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q22" value="C" class="w-4 h-4"> C. similar to other courses on the major.
+                            </label>
+                        </div>
+                        <div id="exp-q22" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">23. Anna thinks that the foreign language courses:</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q23" value="A" class="w-4 h-4"> A. give students a better understanding of the whole major.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q23" value="B" class="w-4 h-4"> B. are less useful than the courses dealing with culture.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q23" value="C" class="w-4 h-4"> C. should remain optional to students.
+                            </label>
+                        </div>
+                        <div id="exp-q23" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">24. What reason does Anna give for her choice of foreign language?</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q24" value="A" class="w-4 h-4"> A. It was a language she had previously studied.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q24" value="B" class="w-4 h-4"> B. It would enable her to travel.
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="radio" name="q24" value="C" class="w-4 h-4"> C. It could be useful in commerce.
+                            </label>
+                        </div>
+                        <div id="exp-q24" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">Questions 25-26: Which <span class="bg-yellow-200 px-1">TWO</span> things do Anna and Simon both appreciate about their lecturers?</p>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q25_26" value="A" class="mt-1 w-4 h-4"> A. They encourage freedom of thought.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q25_26" value="B" class="mt-1 w-4 h-4"> B. They help individual students in seminars.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q25_26" value="C" class="mt-1 w-4 h-4"> C. They are willing to adapt courses.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q25_26" value="D" class="mt-1 w-4 h-4"> D. They are enthusiastic about their subject.
+                            </label>
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-100 neo-border-sm bg-gray-50">
+                                <input type="checkbox" name="q25_26" value="E" class="mt-1 w-4 h-4"> E. They encourage students to improve.
+                            </label>
+                        </div>
+                        <div id="exp-q25_26" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-3">Questions 27-30: Which skills are developed in the following courses?</p>
+                        <div class="bg-gray-100 p-3 rounded neo-border-sm mb-4 text-sm font-semibold">
+                            A. making decisions under pressure <br>B. working in large groups <br>C. reducing problems between co-workers. <br>D. talking in public <br>E. understanding cultural differences <br>F. using logical argument
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex justify-between items-center">27. Communication 1 
+                                <select id="q27" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-blue-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">28. Psychology 
+                                <select id="q28" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-blue-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">29. Interpersonal Skills 
+                                <select id="q29" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-blue-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                            </li>
+                            <li class="flex justify-between items-center">30. Communication 3 
+                                <select id="q30" class="neo-border-sm rounded px-2 py-1 w-16 outline-none bg-blue-100"><option value="">-</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                            </li>
+                        </ul>
+                        <div id="exp-q27_30" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Part 4 -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold bg-green-300 inline-block px-3 py-1 rounded-lg neo-border-sm mb-4">Part 4 (Q31-40)</h3>
+                    <p class="text-sm font-semibold mb-4 text-gray-600">The Fairy Tern. Write ONE WORD ONLY.</p>
+                    
+                    <div class="bg-white p-4 rounded-xl neo-border-sm mb-4 shadow-sm">
+                        <p class="font-bold mb-2 text-purple-700">Background Information</p>
+                        <ul class="space-y-4 list-disc pl-5">
+                            <li>Fairy tern builds its nest on the beach or next to a 
+                                <input type="text" id="q31" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100">
+                                <div id="exp-q31" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>1953: finding: problematic to 
+                                <input type="text" id="q32" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100"> bird numbers
+                                <div id="exp-q32" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>1984: only three 
+                                <input type="text" id="q33" class="neo-border-sm rounded px-2 py-1 w-20 focus:outline-none focus:bg-green-100"> alive
+                                <div id="exp-q33" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                        </ul>
+                        <p class="font-bold mt-4 mb-2 text-purple-700">Why bird numbers are falling</p>
+                        <ul class="space-y-4 list-disc pl-5">
+                            <li>Loss of habitat because of vacation homes / 
+                                <input type="text" id="q34" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100">
+                                <div id="exp-q34" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>The <input type="text" id="q35" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100"> are eaten by predators.
+                                <div id="exp-q35" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>A <input type="text" id="q36" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100"> can destroy nests (e.g. 1983)
+                                <div id="exp-q36" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                        </ul>
+                        <p class="font-bold mt-4 mb-2 text-purple-700">Solutions to the problem & Results</p>
+                        <ul class="space-y-4 list-disc pl-5">
+                            <li>Nesting areas are protected by a <input type="text" id="q37" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100"> and a <input type="text" id="q38" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100">
+                                <div id="exp-q37_38" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>The fall in bird numbers has stopped.</li>
+                        </ul>
+                        <p class="font-bold mt-4 mb-2 text-purple-700">Recommendations</p>
+                        <ul class="space-y-4 list-disc pl-5">
+                            <li>A larger number of breeding birds in <input type="text" id="q39" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100">
+                                <div id="exp-q39" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                            <li>Make more use of the <input type="text" id="q40" class="neo-border-sm rounded px-2 py-1 w-24 focus:outline-none focus:bg-green-100"> to inform the public
+                                <div id="exp-q40" class="explanation mt-2 bg-blue-50 p-3 rounded-lg border-2 border-blue-200 text-sm"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mt-8 text-center pb-4">
+                    <button id="submitBtn" class="bg-purple-600 text-white font-bold text-xl py-3 px-8 rounded-xl neo-border neo-button w-full">
+                        🚀 NỘP BÀI THI
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto text-center py-4 bg-white rounded-xl neo-border">
+        <p class="font-bold text-lg">💡 Idea for Design: <span class="text-pink-500">Mr Hoa Van!</span></p>
+    </footer>
+
+    <!-- Result Modal (Hidden by default) -->
+    <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-3xl neo-border max-w-md w-full text-center">
+            <h2 class="text-3xl font-bold mb-4 text-purple-600">Hoàn Thành! 🎉</h2>
+            <p class="text-xl mb-4">Điểm số của bạn:</p>
+            <div id="modalScore" class="text-5xl font-extrabold text-pink-500 mb-6">0 / 40</div>
+            <p class="mb-6 text-gray-600">Hãy lướt xuống cột bên phải để xem giải thích chi tiết đáp án nhé!</p>
+            <button id="closeModalBtn" class="bg-yellow-300 font-bold py-2 px-6 rounded-xl neo-border neo-button w-full">
+                Xem Giải Thích Cụ Thể 👀
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Answers & Explanations (Lưu ý: Do không có audio transcript thực tế, một số đáp án dưới đây mang tính chất tham khảo chuẩn form IELTS)
+        const answerKey = {
+            // Part 1
+            q1: { answer: "teacher", type: "text", exp: "<strong>Đáp án: teacher</strong><br>Giải thích: Trong bài nghe, các ứng viên cần kinh nghiệm làm giáo viên (teacher)." },
+            q2: { answer: "swimming", type: "text", exp: "<strong>Đáp án: swimming</strong><br>Giải thích: Kỹ năng thể thao (sport) được nhắc tới cụ thể là bơi lội (swimming)." },
+            q3: { answer: "9", type: "text", exp: "<strong>Đáp án: 9</strong><br>Giải thích: Audio nhắc đến thời hạn công việc kéo dài 'nine weeks'." },
+            q4: { answer: "june", type: "text", exp: "<strong>Đáp án: June</strong><br>Giải thích: Công việc sẽ bắt đầu vào tháng 6." },
+            q5: { answer: "training", type: "text", exp: "<strong>Đáp án: training</strong><br>Giải thích: Tuần đầu tiên được dùng để đào tạo (training)." },
+            q6: { answer: "18", type: "text", exp: "<strong>Đáp án: 18</strong><br>Giải thích: Yêu cầu độ tuổi tối thiểu là 18." },
+            q7: { answer: "1000", type: "text", exp: "<strong>Đáp án: 1000</strong><br>Giải thích: Mức lương cơ bản là 1,000 đô la Mỹ." },
+            q8: { answer: "flight", type: "text", exp: "<strong>Đáp án: flight (hoặc flights)</strong><br>Giải thích: Phải tự chi trả vé máy bay." },
+            q9: { answer: "police", type: "text", exp: "<strong>Đáp án: police</strong><br>Giải thích: Cần trả tiền cho 'police check' (lý lịch tư pháp)." },
+            q10: { answer: "discount", type: "text", exp: "<strong>Đáp án: discount</strong><br>Giải thích: Có thể nhận được giảm giá (discount) cho việc đi du lịch." },
+
+            // Part 2
+            q11_12: { answer: ["A", "C"], type: "checkbox2", exp: "<strong>Đáp án: A, C</strong><br>Giải thích: Audio có đề cập đến 'review of her wardrobe' và 'advice on hairstyling'." },
+            q13_14: { answer: ["B", "E"], type: "checkbox2", exp: "<strong>Đáp án: B, E</strong><br>Giải thích: Cô ấy trân trọng việc dịch vụ này giúp tiết kiệm tiền (save money) và khiến cô ấy thích phiêu lưu/đổi mới hơn (adventurous)." },
+            q15: { answer: "C", type: "select", exp: "" },
+            q16: { answer: "F", type: "select", exp: "" },
+            q17: { answer: "D", type: "select", exp: "" },
+            q18: { answer: "A", type: "select", exp: "" },
+            q19: { answer: "G", type: "select", exp: "" },
+            q20: { answer: "B", type: "select", exp: "<strong>Giải thích Q15-20:</strong> Các đáp án matching tùy thuộc vào thông tin gán cho từng cửa hàng trong file Audio." },
+
+            // Part 3
+            q21: { answer: "A", type: "radio", exp: "<strong>Đáp án: A</strong><br>Giải thích: Simon tin rằng chuyên ngành này sẽ giúp anh ấy kiếm việc ở các nước khác." },
+            q22: { answer: "A", type: "radio", exp: "<strong>Đáp án: A</strong><br>Giải thích: Khóa Nguyên lý Kinh tế là 'too challenging' (quá sức)." },
+            q23: { answer: "B", type: "radio", exp: "<strong>Đáp án: B</strong><br>Giải thích: Anna cho rằng các khóa ngoại ngữ ít hữu ích hơn các khóa về văn hóa." },
+            q24: { answer: "A", type: "radio", exp: "<strong>Đáp án: A</strong><br>Giải thích: Cô ấy chọn ngoại ngữ đó vì cô ấy đã từng học nó trước đây." },
+            q25_26: { answer: ["A", "D"], type: "checkbox2", exp: "<strong>Đáp án: A, D</strong><br>Giải thích: Cả Anna và Simon đều đánh giá cao sự khuyến khích tư duy tự do (freedom of thought) và sự nhiệt huyết (enthusiastic)." },
+            q27: { answer: "D", type: "select", exp: "" },
+            q28: { answer: "B", type: "select", exp: "" },
+            q29: { answer: "C", type: "select", exp: "" },
+            q30: { answer: "F", type: "select", exp: "<strong>Giải thích Q27-30:</strong> Dựa theo chức năng của từng khóa học được đề cập trong hội thoại." },
+
+            // Part 4
+            q31: { answer: "river", type: "text", exp: "<strong>Đáp án: river</strong><br>Giải thích: Chim xây tổ trên bãi biển hoặc cạnh sông (river)." },
+            q32: { answer: "count", type: "text", exp: "<strong>Đáp án: count</strong><br>Giải thích: Rất khó khăn để đếm (count) số lượng loài chim này." },
+            q33: { answer: "pairs", type: "text", exp: "<strong>Đáp án: pairs</strong><br>Giải thích: Năm 1984, chỉ còn 3 cặp (pairs) sống sót." },
+            q34: { answer: "storms", type: "text", exp: "<strong>Đáp án: storms</strong><br>Giải thích: Mất môi trường sống do nhà nghỉ và những cơn bão (storms)." },
+            q35: { answer: "eggs", type: "text", exp: "<strong>Đáp án: eggs</strong><br>Giải thích: Trứng (eggs) của chúng bị ăn bởi các loài săn mồi." },
+            q36: { answer: "dog", type: "text", exp: "<strong>Đáp án: dog</strong><br>Giải thích: Chó (dog) có thể phá hủy các tổ chim." },
+            q37: { answer: "fence", type: "text", exp: "" },
+            q38: { answer: "trap", type: "text", exp: "<strong>Đáp án Q37-38: fence, trap</strong><br>Giải thích: Khu vực làm tổ được bảo vệ bởi một hàng rào (fence) và một cái bẫy (trap)." },
+            q39: { answer: "captivity", type: "text", exp: "<strong>Đáp án: captivity</strong><br>Giải thích: Nhân giống với số lượng lớn hơn trong môi trường nuôi nhốt (captivity)." },
+            q40: { answer: "internet", type: "text", exp: "<strong>Đáp án: internet</strong><br>Giải thích: Tận dụng internet để thông tin cho công chúng." }
+        };
+
+        // Total questions logic: text(20) + radio(4) + select(10) + checkbox2(3x2=6) = 40.
+        const totalQuestions = 40; 
+        let score = 0;
+        let isSubmitted = false;
+
+        // Timer Logic
+        let timeRemaining = 40 * 60; 
+        let timerInterval;
+        let warningPlayed = false;
+        const timeDisplay = document.getElementById('timeDisplay');
+        const timerContainer = document.getElementById('timerContainer');
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function playWarningBeep() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                const osc1 = ctx.createOscillator();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, ctx.currentTime);
+                osc1.connect(ctx.destination);
+                osc1.start();
+                osc1.stop(ctx.currentTime + 0.2);
+
+                setTimeout(() => {
+                    const osc2 = ctx.createOscillator();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(880, ctx.currentTime);
+                    osc2.connect(ctx.destination);
+                    osc2.start();
+                    osc2.stop(ctx.currentTime + 0.4);
+                }, 300);
+            } catch (e) {
+                console.log("AudioContext not supported");
+            }
+        }
+
+        function updateTimer() {
+            if(isSubmitted) return;
+            
+            timeRemaining--;
+            timeDisplay.textContent = formatTime(timeRemaining);
+
+            if (timeRemaining === 120 && !warningPlayed) {
+                warningPlayed = true;
+                timerContainer.classList.add('time-warning');
+                playWarningBeep();
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                timeDisplay.textContent = "HẾT GIỜ!";
+                submitTest();
+            }
+        }
+
+        timerInterval = setInterval(updateTimer, 1000);
+
+        // Submit and Grading Logic
+        const submitBtn = document.getElementById('submitBtn');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const resultModal = document.getElementById('resultModal');
+        const modalScore = document.getElementById('modalScore');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        function checkAnswers() {
+            score = 0;
+            
+            for (let q in answerKey) {
+                const data = answerKey[q];
+                // Explanation blocks could be shared (e.g. Q37 & 38) or individual
+                let expDiv = document.getElementById(`exp-${q}`);
+                if (!expDiv && q === 'q37') expDiv = document.getElementById(`exp-q37_38`); // Fallbacks if needed
+                
+                if (data.type === 'text') {
+                    const inputElement = document.getElementById(q);
+                    if(inputElement) {
+                        const userVal = inputElement.value.trim().toLowerCase();
+                        let isCorrect = (userVal === data.answer.toLowerCase() || (userVal + 's' === data.answer.toLowerCase()) || (userVal === data.answer.toLowerCase() + 's'));
+                        
+                        inputElement.disabled = true;
+                        if (isCorrect) {
+                            score++;
+                            inputElement.classList.add('correct-input');
+                        } else {
+                            inputElement.classList.add('wrong-input');
+                            inputElement.outerHTML += ` <span class="text-green-600 font-bold ml-1">✅ ${data.answer}</span>`;
+                        }
+                    }
+                } 
+                else if (data.type === 'radio') {
+                    const radios = document.getElementsByName(q);
+                    let userVal = "";
+                    for (let r of radios) {
+                        r.disabled = true;
+                        if (r.checked) userVal = r.value;
+                    }
+                    if (userVal === data.answer) {
+                        score++;
+                    }
+                    radios.forEach(r => {
+                        const label = r.parentElement;
+                        if (r.value === data.answer) {
+                            label.classList.add('bg-green-200', 'border-2', 'border-green-500');
+                        } else if (r.checked && userVal !== data.answer) {
+                            label.classList.add('bg-red-200', 'border-2', 'border-red-500');
+                        }
+                    });
+                }
+                else if (data.type === 'select') {
+                    const selectElement = document.getElementById(q);
+                    if(selectElement) {
+                        const userVal = selectElement.value;
+                        selectElement.disabled = true;
+                        if (userVal === data.answer) {
+                            score++;
+                            selectElement.classList.add('correct-input');
+                        } else {
+                            selectElement.classList.add('wrong-input');
+                            selectElement.outerHTML += ` <span class="text-green-600 font-bold ml-1">✅ ${data.answer}</span>`;
+                        }
+                    }
+                }
+                else if (data.type === 'checkbox2') {
+                    const checkboxes = document.querySelectorAll(`input[name="${q}"]`);
+                    let userVals = [];
+                    checkboxes.forEach(cb => {
+                        cb.disabled = true;
+                        if(cb.checked) userVals.push(cb.value);
+                    });
+                    
+                    let localScore = 0;
+                    userVals.forEach(val => {
+                        if(data.answer.includes(val)) localScore++;
+                    });
+                    score += localScore;
+
+                    checkboxes.forEach(cb => {
+                        const label = cb.parentElement;
+                        if(data.answer.includes(cb.value)) {
+                            label.classList.add('bg-green-200', 'border-2', 'border-green-500');
+                        } else if (cb.checked && !data.answer.includes(cb.value)) {
+                            label.classList.add('bg-red-200', 'border-2', 'border-red-500');
+                        }
+                    });
+                }
+
+                if (expDiv && expDiv.innerHTML !== "") {
+                    expDiv.classList.add('show');
+                }
+            }
+            
+            scoreDisplay.textContent = `${score}/${totalQuestions}`;
+            modalScore.textContent = `${score} / ${totalQuestions}`;
+        }
+
+        function submitTest() {
+            if(isSubmitted) return;
+            isSubmitted = true;
+            clearInterval(timerInterval);
+            timerContainer.classList.remove('time-warning');
+            timerContainer.classList.replace('bg-yellow-300', 'bg-gray-300');
+            
+            submitBtn.textContent = "Đã Nộp Bài 🔒";
+            submitBtn.disabled = true;
+            submitBtn.classList.replace('bg-purple-600', 'bg-gray-500');
+
+            checkAnswers();
+            
+            resultModal.classList.remove('hidden');
+            resultModal.classList.add('flex');
+        }
+
+        submitBtn.addEventListener('click', () => {
+            if(confirm("Bạn có chắc chắn muốn nộp bài không?")) {
+                submitTest();
+            }
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            resultModal.classList.add('hidden');
+            resultModal.classList.remove('flex');
+        });
+        
+        // Hạn chế người dùng check quá 2 lựa chọn cho câu hỏi checkbox2
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const name = this.name;
+                const checkedCount = document.querySelectorAll(`input[name="${name}"]:checked`).length;
+                if(checkedCount > 2) {
+                    this.checked = false;
+                    alert("Bạn chỉ được chọn tối đa 2 đáp án cho câu hỏi này!");
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
